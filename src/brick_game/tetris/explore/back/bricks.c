@@ -10,10 +10,16 @@ const Brick BRICKS_TYPES[BRICK_TYPES_COUNT] = {
     {{{0, 1}, {1, 1}, {1, 0}, {2, 0}}, 0, 0},
     {{{0, 1}, {1, 1}, {2, 1}, {1, 0}}, 0, 0},
     {{{0, 0}, {1, 0}, {1, 1}, {2, 1}}, 0, 0}};
+/*
+  0:  0000  1:  00   2:   0  3: 00  4:   00
+                 00     000     00      00
+
+  5:   0   6:  00
+      000       00
+*/
 
 void born_brick(Brick *brick, int x, int y, int brick_type) {
 
-  
   brick_type = (brick_type < 0 || brick_type > BRICK_TYPES_COUNT)
                    ? rand() % BRICK_TYPES_COUNT
                    : brick_type;
@@ -22,7 +28,7 @@ void born_brick(Brick *brick, int x, int y, int brick_type) {
   *brick = BRICKS_TYPES[brick_type];
 }
 
-void set_anchor(Brick *brick, int x, int y) {
-  brick->anchor_x = x;
-  brick->anchor_y = y;
-}
+
+
+
+

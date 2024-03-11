@@ -8,10 +8,10 @@
 // 	 	tl, tr, bl, br;
 // }MY_WIN_BORDER;
 
-typedef struct WinInfo {
-  int startx, starty;
-  int height, width;
-} WinInfo;
+// typedef struct WinInfo {
+//   int startx, starty;
+//   int height, width;
+// } WinInfo;
 
 // void init_win_params(WIN *p_win);
 // void print_win_params(WIN *p_win);
