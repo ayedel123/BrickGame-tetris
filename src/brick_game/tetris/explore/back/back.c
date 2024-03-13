@@ -76,7 +76,7 @@ int check_bordercross_y(GameManager *gameManager, int direction) {
     }
   } else if (direction == top) {
     if (current_brick->anchor_y + gameManager->brickBorder.top <=
-        WINDOW_OFFSET + 1) {
+        WINDOW_OFFSET) {
       col = COL_STATE_COL;
     }
   }
@@ -106,7 +106,7 @@ int move_cursor(GameManager *gameManager, int direction) {
   return 0;
 }
 
-int move_brick(GameManager *gameManager, int direction) {
+int moveBrick(GameManager *gameManager, int direction) {
   move_cursor(gameManager, direction);
   move_cursor(gameManager, -direction);
 
@@ -118,8 +118,6 @@ int move_brick(GameManager *gameManager, int direction) {
   if (res == 0) {
     move_cursor(gameManager, direction);
   }
-  // if (res != COL_STATE_CRIT)
-  // res = 0;
   return res;
 }
 
@@ -180,15 +178,69 @@ void rotate(GameManager *gameManager, int angle) {
   }
 }
 
-void deleteDotes(GameManager *gameManager) {
-  int *susDotes[gameManager->winInfo.width];
-  Brick *susBrick;
-  int doteCount = 0;
-  for (int i = gameManager->winInfo.height - 1; i >= WINDOW_OFFSET; i++) {
-    for (int j = 0; j < gameManager->current_brick; j++) {
-      susBrick = &gameManager->bricks[i];
-      for (int k = 0; k < 4; k++) {
-      }
+void fillField(GameManager *gameManager) {
+  for (int i = 0; i < gameManager->current_brick; i++) {
+  }
+}
+
+void writeSuspectDots(Brick *brick, int **susYDotes, int *susCount, int y) {
+  for (int k = 0; k < 4; k++) {
+    if (brick->anchor_y + brick->cords[k][1] == y) {
+      susYDotes[*susCount] = &brick->cords[k][1];
+      (*susCount)++;
     }
   }
+}
+
+int tryDeleteDots(int **susYDotes, int width, int *susCount, int deleteVal) {
+  int res = 0;
+
+  if (*susCount == 10) {
+    for (int i = 0; i < *susCount; i++) {
+      *susYDotes[i] = deleteVal;
+    }
+    *susCount = 0;
+    res = 1;
+  }
+
+  return res;
+}
+
+void dropBricks(GameManager *gameManager, int lastLine, int delLines,
+                int deleteVal) {
+  for (int i = 0; i < gameManager->current_brick; i++) {
+    for (int j = 0; j < 4; j++) {
+      if ((gameManager->bricks[i].cords[j][1] +
+               gameManager->bricks[i].anchor_y <
+           lastLine) &&
+          gameManager->bricks[i].cords[j][1] != deleteVal)
+        gameManager->bricks[i].cords[j][1] += delLines;
+    }
+  }
+}
+
+void deleteDots(GameManager *gameManager) {
+  int *susYDotes[gameManager->winInfo.width - 2]; // Нет инициализации
+
+  int susCount = 0;
+  int tmp = 0;
+  int lastLine = 0;
+  Brick *susBrick;
+  int delLines = 0;
+  int deleteVal = -gameManager->winInfo.height;
+  for (int y = gameManager->winInfo.height - 1; y > 0; y--) {
+    for (int j = 0; j < gameManager->current_brick && tmp == 0; j++) {
+      writeSuspectDots(&gameManager->bricks[j], susYDotes, &susCount, y);
+      tmp = tryDeleteDots(susYDotes, gameManager->winInfo.width, &susCount,
+                          deleteVal);
+    }
+    if (tmp) {
+      lastLine = y;
+      delLines++;
+    }
+    susCount = 0;
+    tmp = 0;
+  }
+  if (delLines > 0)
+    dropBricks(gameManager, lastLine, delLines, deleteVal);
 }

@@ -10,9 +10,10 @@ typedef struct GameManager {
   int current_brick;
   Brick *bricks;
   BrickBorder brickBorder;
+  int *field;
 
 } GameManager;
 
-void init_game_manager(GameManager * gameManager);
+void init_game_manager(GameManager *gameManager);
 
 #endif

@@ -24,7 +24,7 @@ int main(int argc, char *argv[]) {
   GameManager gameManager;
   setUp(winInfo, windows, 3, &gameManager, bricks);
   int direction = 0;
-  born_brick(&bricks[0], 1, 1, 0);
+  born_brick(&bricks[0], 1, 1, -1);
   calcBrickBordesrs(&gameManager);
 
   while (ch != 'O' && ch != 'o') {
@@ -36,12 +36,13 @@ int main(int argc, char *argv[]) {
     debugInfo(windows[debugWin], &gameManager, direction);
     wclear(windows[gameWin]);
     windows[gameWin] = setUpWindow(&winInfo[gameWin], gameWin);
-    int check = move_brick(&gameManager, direction);
+    int check = moveBrick(&gameManager, direction);
     for (int i = 0; i <= gameManager.current_brick; i++) {
       drawBrick(windows[gameWin], &bricks[i]);
     }
     if (check == COL_STATE_CRIT) {
       resetBrick(&gameManager);
+      deleteDots(&gameManager);
     }
   }
 
@@ -88,8 +89,10 @@ int inputHandler(int *direction) {
 
 void drawBrick(WINDOW *win, Brick *brick) {
   for (int i = 0; i < 4; i++) {
-    mvwprintw(win, brick->anchor_y + brick->cords[i][1],
-              brick->anchor_x + brick->cords[i][0], "O");
+    if (brick->cords[i][1] != -GAME_WINDOW_HEIGHT) {
+      mvwprintw(win, brick->anchor_y + brick->cords[i][1],
+                brick->anchor_x + brick->cords[i][0], "O");
+    }
   }
   wmove(win, brick->anchor_y, brick->anchor_x);
   wrefresh(win);
