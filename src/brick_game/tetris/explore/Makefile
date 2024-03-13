@@ -8,12 +8,13 @@ CHECK_FLAGS = -lcheck
 pilk:
 	$(CC) $(PILK)
 
-bepis:
-	$(CC) $(BACK) $(UI) $(CURSES)
+bepis: clean
+	$(CC) $(BACK) $(UI) $(CURSES) -o bepis
+	./bepis
 
 test: clean
 	$(CC) $(BACK) back/test/*.c back/test/collision_tests/*.c $(CHECK_FLAGS) -o test.out
 	./test.out
 
 clean:
-	rm -rf *.o *.out test.out
+	rm -rf *.o *.out test.out bepis

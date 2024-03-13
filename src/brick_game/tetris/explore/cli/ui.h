@@ -3,10 +3,12 @@
 
 #include <ncurses.h>
 
-#include "window.h"
 #include "game_window.h"
+#include "window.h"
 
 #define KEY_ESC 27
+
+typedef enum { gameWin, menuWin, debugWin } windowsEnum;
 
 
 #endif

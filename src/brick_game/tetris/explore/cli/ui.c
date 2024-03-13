@@ -1,131 +1,89 @@
 #include "ui.h"
 #include "../back/back.h"
+#include "debug.h"
 
 void fixCursor(int *x, int *y, int rs, int ls);
 void drawBrick(WINDOW *win, Brick *brick);
-//void calcBrickBordesrs(Brick *brick, int *rs, int *ls);
-void resset_brick(Brick *new_brick, int *currnet_brick, int *cx, int *cy);
+void setUp(WinInfo *winInfo, WINDOW **windows, int winCount,
+           GameManager *gameManager, Brick *bricks);
+WINDOW *setUpWindow(WinInfo *WinInfo, int winNumber);
+int inputHandler(int *direction);
 
 int main(int argc, char *argv[]) {
-  srand(time(0));
-  WINDOW *my_win;
-  int startx, starty, width, height;
-  int ch = 0;
-
-  initscr(); /* Start curses mode 		*/
-  cbreak();  /* Line buffering disabled, Pass on
-              * everty thing to me 		*/
-  noecho();
-  keypad(stdscr, TRUE);
-  height = 22;
-  width = 12;
-  starty = (LINES - height) / 2;
-  startx = (COLS - width) / 2;
-
-  int cursor_x = 2;
-  int cursor_y = 2;
-
-  printw("Press ESC to exit");
-  refresh();
-  my_win = create_newwin(height, width, starty, startx);
-  WINDOW *menu = create_newwin(height, width, starty, startx + width);
+  // debug
   char s[255];
+  srand(time(0));
 
+  // setUp
+  WINDOW *windows[3];
+  WinInfo winInfo[3];
+  int ch = 0;
+  refresh();
   Brick bricks[100];
   int currentBrick = 0;
-  born_brick(&bricks[0], cursor_x, cursor_y, -1);
-  int brick_ls = 0;
-  int brick_rs = 0;
-  //calcBrickBordesrs(&bricks[0], &brick_rs, &brick_ls);
-
   GameManager gameManager;
-  init_game_manager(&gameManager);
-  gameManager.current_brick = 0;
-  gameManager.bricks = bricks;
-  gameManager.cursor.x = 2;
-  gameManager.cursor.y = 2;
-  gameManager.winInfo.height = GAME_WINDOW_HEIGHT;
-  gameManager.winInfo.width = GAME_WINDOW_WIDTH;
-  gameManager.winInfo.startx = GAME_WINDOW_STARTX;
-  gameManager.winInfo.starty = GAME_WINDOW_STARTY;
-  // gameManager.brickBorder.right = brick_rs;
-  // gameManager.brickBorder.left = brick_ls;
-  // gameManager.brickBorder.top = 0;
-  // gameManager.brickBorder.bottom = 0;
+  setUp(winInfo, windows, 3, &gameManager, bricks);
+  int direction = 0;
+  born_brick(&bricks[0], 1, 1, 0);
   calcBrickBordesrs(&gameManager);
 
-  int direction = 0;
-  // wrefresh(my_win);
   while (ch != 'O' && ch != 'o') {
-    ch = getch();
-    const char str[2] = {
-        ch,
-    };
-    switch (ch) {
-    case KEY_LEFT:
-      // cursor_x--;
-      direction = left;
-      mvwprintw(menu, 3, 1, "LEFT ");
-      break;
-    case KEY_RIGHT:
-      // cursor_x++;
-      direction = right;
-      mvwprintw(menu, 3, 1, "RIGHT");
-      break;
-    case KEY_UP:
-      // cursor_y--;
-      direction = top;
-      mvwprintw(menu, 3, 1, "UP   ");
-      break;
-    case KEY_DOWN:
-      // cursor_y++;
-      direction = down;
-      mvwprintw(menu, 3, 1, "DOWN ");
-      break;
-    case '0':
-      cursor_y = height / 2;
-      cursor_x = width / 2;
-      break;
+    int angle = inputHandler(&direction);
+    if (angle) {
+      rotate(&gameManager, angle);
+      calcBrickBordesrs(&gameManager);
     }
-    wclear(my_win);
-    my_win = create_newwin(height, width, starty, startx);
-
-    sprintf(s, "%3d %3d", gameManager.cursor.x, gameManager.cursor.y);
-    mvwprintw(menu, 2, 2, s);
-    sprintf(s, "bd %3d %3d", gameManager.brickBorder.right,
-            gameManager.brickBorder.left);
-    mvwprintw(menu, 5, 1, s);
-    sprintf(s, "aw %3d %3d",
-            gameManager.bricks[gameManager.current_brick].anchor_x,
-            gameManager.winInfo.width);
-    mvwprintw(menu, 6, 1, s);
+    debugInfo(windows[debugWin], &gameManager, direction);
+    wclear(windows[gameWin]);
+    windows[gameWin] = setUpWindow(&winInfo[gameWin], gameWin);
     int check = move_brick(&gameManager, direction);
-    sprintf(s, "check %3d", check);
-    mvwprintw(menu, 7, 1, s);
-    wrefresh(menu);
-
-    wattron(my_win, A_REVERSE);
-    // fixCursor(&cursor_x, &cursor_y, brick_rs, brick_ls);
-    // set_anchor(&bricks[currentBrick], cursor_x, cursor_y);
-    //  mvwprintw(my_win, cursor_y, cursor_x, " ");
-    wrefresh(my_win);
-
-    for (int i = 0; i <= currentBrick; i++) {
-      drawBrick(my_win, &bricks[i]);
+    for (int i = 0; i <= gameManager.current_brick; i++) {
+      drawBrick(windows[gameWin], &bricks[i]);
     }
-
-    wattroff(my_win, A_REVERSE);
-    wmove(my_win, cursor_y, cursor_x);
-
-    // if (cursor_y + brick_ls >= GAME_WINDOW_HEIGHT - 2 ||
-    //     check_collision_bot(bricks, currentBrick)) {
-    //   resset_brick(&bricks[currentBrick + 1], &currentBrick, &cursor_x,
-    //                &cursor_y);
-    // }
+    if (check == COL_STATE_CRIT) {
+      resetBrick(&gameManager);
+    }
   }
 
   endwin(); /* End curses mode		  */
   return 0;
+}
+
+int inputHandler(int *direction) {
+  int ch = getch();
+  int angle = 0;
+  const char str[2] = {
+      ch,
+  };
+  switch (ch) {
+  case KEY_LEFT:
+    *direction = left;
+    break;
+  case KEY_RIGHT:
+    *direction = right;
+    break;
+  case KEY_UP:
+    *direction = top;
+    break;
+  case KEY_DOWN:
+    *direction = down;
+    break;
+  case '0':
+    break;
+  case 'Q':
+    angle = 1;
+    *direction = 0;
+    break;
+  case 'E':
+    angle = -1;
+    *direction = 0;
+    break;
+  default:
+    *direction = 0;
+    break;
+  }
+
+  return angle;
 }
 
 void drawBrick(WINDOW *win, Brick *brick) {
@@ -147,21 +105,56 @@ void fixCursor(int *x, int *y, int rs, int ls) {
                                            : *y;
 }
 
-// void calcBrickBordesrs(Brick *brick, int *rs, int *ls) {
-//   int lrs = 0;
-//   int lls = 0;
+void refreshAllWin(WINDOW **wins, int winCount) {
+  for (int i = 0; i < winCount; i++) {
+    wrefresh(wins[i]);
+  }
+}
 
-//   for (int i = 0; i < 4; i++) {
-//     lrs = (lrs > brick->cords[i][0]) ? lrs : brick->cords[i][0];
-//     lls = (lls > brick->cords[i][1]) ? lls : brick->cords[i][1];
-//   }
-//   *rs = lrs;
-//   *ls = lls;
-// }
+void cursesSetUp() {
+  initscr();
+  cbreak();
+  noecho();
+  keypad(stdscr, TRUE);
+}
+WINDOW *setUpWindow(WinInfo *WinInfo, int winNumber) {
 
-void resset_brick(Brick *new_brick, int *currnet_brick, int *cx, int *cy) {
-  (*currnet_brick)++;
-  *cx = 1;
-  *cy = 1;
-  born_brick(new_brick, *cx, *cy, -1);
+  int height = GAME_WINDOW_HEIGHT;
+  int width = GAME_WINDOW_WIDTH;
+  int starty = (LINES - height) / 2;
+  // int startx = (COLS - width) / 2 + width * winNumber;
+  int startx = 2 + width * winNumber;
+  char s[15];
+  sprintf(s, "win %d", winNumber);
+  mvprintw(starty - 1, startx + 2, s);
+
+  refresh();
+  WINDOW *localWindow = create_newwin(height, width, starty, startx);
+  return localWindow;
+}
+
+void *setUpBrickGameWindows(WinInfo *winInfo, WINDOW **windows, int winCount) {
+  for (int i = 0; i < winCount; i++) {
+    windows[i] = setUpWindow(&winInfo[i], i);
+  }
+}
+
+void setUpGameManager(GameManager *gameManager, Brick *bricks) {
+  init_game_manager(gameManager);
+  gameManager->current_brick = 0;
+  gameManager->bricks = bricks;
+  gameManager->cursor.x = 1;
+  gameManager->cursor.y = 1;
+  gameManager->winInfo.height = GAME_WINDOW_HEIGHT;
+  gameManager->winInfo.width = GAME_WINDOW_WIDTH;
+  gameManager->winInfo.startx = GAME_WINDOW_STARTX;
+  gameManager->winInfo.starty = GAME_WINDOW_STARTY;
+  // calcBrickBordesrs(&gameManager);
+}
+
+void setUp(WinInfo *winInfo, WINDOW **windows, int winCount,
+           GameManager *gameManager, Brick *bricks) {
+  cursesSetUp();
+  setUpBrickGameWindows(winInfo, windows, winCount);
+  setUpGameManager(gameManager, bricks);
 }
