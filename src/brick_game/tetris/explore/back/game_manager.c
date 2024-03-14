@@ -13,4 +13,6 @@ void init_game_manager(GameManager *gameManager) {
   gameManager->winInfo.startx = 0;
   gameManager->winInfo.starty = 0;
   gameManager->winInfo.width = 0;
+  gameManager->deadDot = 0;
+  gameManager->colorCount = 0;
 }

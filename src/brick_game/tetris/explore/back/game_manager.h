@@ -10,7 +10,8 @@ typedef struct GameManager {
   int current_brick;
   Brick *bricks;
   BrickBorder brickBorder;
-  int *field;
+  int deadDot;
+  int colorCount;
 
 } GameManager;
 

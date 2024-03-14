@@ -15,7 +15,8 @@ typedef enum directions_enum {
   top = -2,
   down = 2,
   right = 1,
-  left = -1
+  left = -1,
+  state = 0
 } directions_enum;
 
 #define COL_STATE_NO_COL 0

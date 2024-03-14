@@ -46,8 +46,8 @@ void printBrickBorder(WINDOW *debugWin, GameManager *gameManager, int *y,
   mvwprintw(debugWin, *y, 2, s);
   (*y)++;
 
-  sprintf(s, "%d %d", gameManager->bricks[gameManager->current_brick].anchor_x,
-          gameManager->bricks[gameManager->current_brick].anchor_y);
+  sprintf(s, "%d %d", gameManager->bricks[gameManager->current_brick].x,
+          gameManager->bricks[gameManager->current_brick].y);
   mvwprintw(debugWin, *y, 2, s);
   sprintf(s, "%d", gameManager->brickBorder.top);
   mvwprintw(debugWin, *y, 7, s);
@@ -58,17 +58,27 @@ void printBrickBorder(WINDOW *debugWin, GameManager *gameManager, int *y,
   (*y)++;
 }
 
-void debugInfo(WINDOW *debugWin, GameManager *gameManager, int direction) {
+void printTime(WINDOW *debugWin, long long time, int *y, char *s) {
+  sprintf(s, "%10ld ms", time);
+  (*y)++;
+  (*y)++;
+  mvwprintw(debugWin, *y, 2, s);
+  (*y)++;
+}
+
+void debugInfo(WINDOW *debugWin, GameManager *gameManager, int direction,
+               long long time) {
   char s[255];
   int y = 2;
   printCursorInfo(debugWin, gameManager, direction, &y, s);
   printBrickBorder(debugWin, gameManager, &y, s);
+  printTime(debugWin, time, &y, s);
   // printBrick(debugWin, gameManager, &y, s);
   //    sprintf(s, "bd %3d %3d", gameManager.brickBorder.right,
   //            gameManager.brickBorder.left);
   //    // mvwprintw(menu, 5, 1, s);
   //    sprintf(s, "aw %3d %3d",
-  //            gameManager.bricks[gameManager.current_brick].anchor_x,
+  //            gameManager.bricks[gameManager.current_brick].x,
   //            gameManager.winInfo.width);
   //  mvwprintw(menu, 6, 1, s);s
   wrefresh(debugWin);

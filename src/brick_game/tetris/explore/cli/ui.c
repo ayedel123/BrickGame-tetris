@@ -1,19 +1,26 @@
 #include "ui.h"
-#include "../back/back.h"
-#include "debug.h"
+
+#include <sys/time.h>
+
+long long GetTimeInMS() {
+  struct timeval tv;
+
+  gettimeofday(&tv, NULL);
+  return (((long long)tv.tv_sec) * 1000) + (tv.tv_usec / 1000);
+}
 
 void fixCursor(int *x, int *y, int rs, int ls);
-void drawBrick(WINDOW *win, Brick *brick);
+void drawBrick(WINDOW *win, Brick *brick, GameManager *gameManager);
 void setUp(WinInfo *winInfo, WINDOW **windows, int winCount,
            GameManager *gameManager, Brick *bricks);
 WINDOW *setUpWindow(WinInfo *WinInfo, int winNumber);
-int inputHandler(int *direction);
+int inputHandler(int *direction, int *angle);
 
 int main(int argc, char *argv[]) {
   // debug
   char s[255];
   srand(time(0));
-
+  timeout(0);
   // setUp
   WINDOW *windows[3];
   WinInfo winInfo[3];
@@ -24,35 +31,68 @@ int main(int argc, char *argv[]) {
   GameManager gameManager;
   setUp(winInfo, windows, 3, &gameManager, bricks);
   int direction = 0;
-  born_brick(&bricks[0], 1, 1, -1);
+  born_brick(&bricks[0], 1, 1, -1, COLOR_COUNT);
   calcBrickBordesrs(&gameManager);
 
+  // wprintw("Время выполнения программы: %f секунд\n", cpu_time_used);
+  int collision = 0;
+  long long startTime = GetTimeInMS();
+  long long endTime = 0;
+  int angle = 0;
+  int forcedMove = 0;
   while (ch != 'O' && ch != 'o') {
-    int angle = inputHandler(&direction);
+
+    int keyVal = inputHandler(&direction, &angle);
     if (angle) {
       rotate(&gameManager, angle);
-      calcBrickBordesrs(&gameManager);
     }
-    debugInfo(windows[debugWin], &gameManager, direction);
+    debugInfo(windows[debugWin], &gameManager, direction, endTime - startTime);
     wclear(windows[gameWin]);
-    windows[gameWin] = setUpWindow(&winInfo[gameWin], gameWin);
-    int check = moveBrick(&gameManager, direction);
-    for (int i = 0; i <= gameManager.current_brick; i++) {
-      drawBrick(windows[gameWin], &bricks[i]);
+    if (keyVal == 0) {
+      windows[gameWin] = setUpWindow(&winInfo[gameWin], gameWin);
+      if (collision == COL_STATE_NO_COL) {
+        collision = moveBrick(&gameManager, direction);
+      }
     }
-    if (check == COL_STATE_CRIT) {
+    endTime = GetTimeInMS();
+    if (endTime - startTime >= 300) {
+      collision = moveBrick(&gameManager, down);
+      startTime = GetTimeInMS();
+      forcedMove = 1;
+    }
+    if (keyVal == 0 || forcedMove) {
+      windows[gameWin] = setUpWindow(&winInfo[gameWin], gameWin);
+      if (collision == COL_STATE_NO_COL) {
+        collision = moveBrick(&gameManager, direction);
+      }
+
+      // wattron(windows[gameWin], A_REVERSE);
+      for (int i = 0; i <= gameManager.current_brick; i++) {
+        drawBrick(windows[gameWin], &bricks[i], &gameManager);
+      }
+    }
+    // wattroff(windows[gameWin], A_REVERSE);
+
+    if (collision == COL_STATE_CRIT) {
       resetBrick(&gameManager);
       deleteDots(&gameManager);
     }
+    keyVal = 1;
+    collision = COL_STATE_NO_COL;
+    forcedMove = 0;
+    angle = 0;
+    direction = 0;
   }
 
   endwin(); /* End curses mode		  */
+
   return 0;
 }
 
-int inputHandler(int *direction) {
+int inputHandler(int *direction, int *angle) {
   int ch = getch();
-  int angle = 0;
+  int res = 0;
+  int result = 0;
   const char str[2] = {
       ch,
   };
@@ -72,29 +112,35 @@ int inputHandler(int *direction) {
   case '0':
     break;
   case 'Q':
-    angle = 1;
+    *angle = -1;
     *direction = 0;
     break;
   case 'E':
-    angle = -1;
+    *angle = 1;
     *direction = 0;
+    break;
+  case ERR:
+    res = ERR;
     break;
   default:
+    res = 1;
     *direction = 0;
     break;
   }
 
-  return angle;
+  return res;
 }
 
-void drawBrick(WINDOW *win, Brick *brick) {
+void drawBrick(WINDOW *win, Brick *brick, GameManager *gameManager) {
+  wattron(win, COLOR_PAIR(brick->color));
   for (int i = 0; i < 4; i++) {
-    if (brick->cords[i][1] != -GAME_WINDOW_HEIGHT) {
-      mvwprintw(win, brick->anchor_y + brick->cords[i][1],
-                brick->anchor_x + brick->cords[i][0], "O");
+    if (brick->cords[i][1] != gameManager->deadDot) {
+      mvwprintw(win, brick->y + brick->cords[i][1],
+                brick->x + brick->cords[i][0], " ");
     }
   }
-  wmove(win, brick->anchor_y, brick->anchor_x);
+  wmove(win, brick->y + brick->cords[0][1], brick->x + brick->cords[0][0]);
+  wattroff(win, COLOR_PAIR(brick->color));
   wrefresh(win);
 }
 
@@ -114,11 +160,30 @@ void refreshAllWin(WINDOW **wins, int winCount) {
   }
 }
 
+void initColors() {
+  init_color(2, 0, 1000, 0);
+  init_color(7, 1000, 400, 0);
+  init_color(4, 200, 200, 1000);
+  init_color(1, 1000, 200, 200);
+  init_pair(1, COLOR_WHITE, 1);
+  init_pair(2, COLOR_WHITE, 2);
+  init_pair(3, COLOR_WHITE, 3);
+  init_pair(4, COLOR_WHITE, 4);
+  init_pair(5, COLOR_WHITE, 5);
+  init_pair(6, COLOR_WHITE, 6);
+  init_pair(7, COLOR_WHITE, 7);
+}
+
 void cursesSetUp() {
   initscr();
   cbreak();
   noecho();
   keypad(stdscr, TRUE);
+  start_color();
+  use_default_colors();
+  curs_set(0);
+  initColors();
+  timeout(2);
 }
 WINDOW *setUpWindow(WinInfo *WinInfo, int winNumber) {
 
@@ -152,6 +217,8 @@ void setUpGameManager(GameManager *gameManager, Brick *bricks) {
   gameManager->winInfo.width = GAME_WINDOW_WIDTH;
   gameManager->winInfo.startx = GAME_WINDOW_STARTX;
   gameManager->winInfo.starty = GAME_WINDOW_STARTY;
+  gameManager->deadDot = -100 * GAME_WINDOW_HEIGHT;
+  gameManager->colorCount = COLOR_COUNT;
   // calcBrickBordesrs(&gameManager);
 }
 

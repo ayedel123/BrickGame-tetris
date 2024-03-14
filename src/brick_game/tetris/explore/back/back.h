@@ -8,7 +8,7 @@
 int moveBrick(GameManager *gameManager, int direction);
 void calcBrickBordesrs(GameManager *gameManager);
 void resetBrick(GameManager *gameManager);
-void rotate(GameManager *gameManager, int angle);
+int rotate(GameManager *gameManager, int angle);
 void deleteDots(GameManager *gameManager);
 
 #endif

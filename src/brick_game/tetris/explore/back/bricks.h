@@ -10,8 +10,9 @@
 
 typedef struct {
   int cords[4][2];
-  int anchor_x;
-  int anchor_y;
+  int x;
+  int y;
+  int color;
 } Brick;
 
 typedef struct {
@@ -23,7 +24,7 @@ typedef struct {
 
 extern const Brick BRICKS_TYPES[BRICK_TYPES_COUNT];
 
-void born_brick(Brick *brick, int x, int y, int brick_type);
+void born_brick(Brick *brick, int x, int y, int brick_type, int colorCount);
 void set_anchor(Brick *brick, int x, int y);
 
 // typedef enum collison_code { no_col, bot_only, right_only, left_only ,bot};
