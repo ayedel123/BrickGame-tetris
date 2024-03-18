@@ -20,8 +20,9 @@ typedef enum directions_enum {
 } directions_enum;
 
 #define COL_STATE_NO_COL 0
-#define COL_STATE_CRIT 2
 #define COL_STATE_COL 1
+#define COL_STATE_CRIT 2
+#define COL_STATE_END 3
 #define WINDOW_OFFSET 1
 
 #endif

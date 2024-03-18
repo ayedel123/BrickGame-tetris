@@ -1,83 +1,55 @@
 #include "ui.h"
 
-#include "uiFan.h"
-#include <sys/time.h>
+// void drawBrick(WINDOW *win, Brick *brick, GameManager *gameManager) {
+//   wattron(win, COLOR_PAIR(brick->color));
+//   for (int i = 0; i < 4; i++) {
+//     if (brick->cords[i][1] != gameManager->deadDot) {
+//       mvwprintw(win, brick->y + brick->cords[i][1],
+//                 brick->x + brick->cords[i][0], " ");
+//     }
+//   }
+//   wmove(win, brick->y + brick->cords[0][1], brick->x + brick->cords[0][0]);
+//   wattroff(win, COLOR_PAIR(brick->color));
+//   wrefresh(win);
+// }
 
-long long GetTimeInMS() {
-  struct timeval tv;
+void drawField(WINDOW *win, GameManager *gameManager) {
 
-  gettimeofday(&tv, NULL);
-  return (((long long)tv.tv_sec) * 1000) + (tv.tv_usec / 1000);
-}
-void setUp(WinInfo *winInfo, WINDOW **windows, int winCount,
-           GameManager *gameManager, Brick *bricks, int **field);
-WINDOW *setUpWindow(WinInfo *WinInfo, int winNumber);
-int inputHandler(int *direction, int *angle);
+  for (int i = 0; i < gameManager->winInfo.height; i++) {
+    for (int j = 0; j < gameManager->winInfo.width; j++) {
 
-int initField(int ***field, int rows, int cols) {
-  *field = (int **)calloc(rows, sizeof(int *));
-  for (int i = 0; i < rows; i++) {
-    (*field)[i] = (int *)calloc(cols, sizeof(int));
+      if (gameManager->field[i][j] == 0) {
+        mvwprintw(win, i + 1, j + 1, " ");
+      } else {
+        wattron(win, COLOR_PAIR(gameManager->field[i][j]));
+        mvwprintw(win, i + 1, j + 1, "0");
+        wattroff(win, COLOR_PAIR(gameManager->field[i][j]));
+      }
+    }
   }
-  return 0;
+
+  wrefresh(win);
 }
 
-int main(int argc, char *argv[]) {
-  // debug
-  char s[255];
-  srand(time(0));
-  timeout(0);
-  // setUp
-  WINDOW *windows[3];
-  WinInfo winInfo[3];
-  int ch = 0;
+WINDOW *setUpWindow(WinInfo *WinInfo, int winNumber) {
+
+  int height = GAME_WINDOW_HEIGHT + 2;
+  int width = GAME_WINDOW_WIDTH + 2;
+  int starty = (LINES - height) / 2;
+  int startx = 2 + width * winNumber;
+  char s[15];
+  sprintf(s, "win %d", winNumber);
+  mvprintw(starty - 1, startx + 2, s);
+
   refresh();
-  Brick bricks[100];
-  int currentBrick = 0;
-  GameManager gameManager;
+  WINDOW *localWindow = create_newwin(height, width, starty, startx);
+  return localWindow;
+}
 
-  int **field = NULL;
-  initField(&field, 100, 100);
-  setUp(winInfo, windows, 3, &gameManager, bricks, field);
-
-  int direction = 0;
-  born_brick(&bricks[0], 1, 1, 1, COLOR_COUNT);
-
-  // wprintw("Время выполнения программы: %f секунд\n", cpu_time_used);
-  int collision = 0;
-  long long startTime = GetTimeInMS();
-  long long endTime = 0;
-  int angle = 0;
-  int forcedMove = 0;
-  windows[gameWin] = setUpWindow(&winInfo[gameWin], gameWin);
-  while (ch != 'O' && ch != 'o') {
-
-    int keyVal = inputHandler(&direction, &angle);
-    // debugInfo(windows[debugWin], &gameManager, direction, endTime -
-    // startTime);
-    //windows[gameWin] = setUpWindow(&winInfo[gameWin], gameWin);
-    drawField(windows[gameWin], &gameManager);
-    endTime = GetTimeInMS();
-
-    collision = handleAction(&gameManager, direction, angle);
-
-    if (endTime - startTime >= 300) {
-      collision = (handleAction(&gameManager, down, 0) == COL_STATE_CRIT)
-                      ? COL_STATE_CRIT
-                      : collision;
-      startTime = GetTimeInMS();
-    }
-
-    if (collision == COL_STATE_CRIT) {
-      resetBrick(&gameManager);
-      fullLineHandler(&gameManager);
-      // deleteDots(&gameManager);
-    }
+void *setUpBrickGameWindows(WinInfo *winInfo, WINDOW **windows, int winCount) {
+  for (int i = 0; i < winCount; i++) {
+    windows[i] = setUpWindow(&winInfo[i], i);
   }
-
-  endwin(); /* End curses mode		  */
-
-  return 0;
 }
 
 int inputHandler(int *direction, int *angle) {
@@ -103,6 +75,7 @@ int inputHandler(int *direction, int *angle) {
     *direction = down;
     break;
   case '0':
+    res = 404;
     break;
   case 'e':
     *angle = -1;
@@ -123,11 +96,6 @@ int inputHandler(int *direction, int *angle) {
   }
 
   return res;
-}
-void refreshAllWin(WINDOW **wins, int winCount) {
-  for (int i = 0; i < winCount; i++) {
-    wrefresh(wins[i]);
-  }
 }
 
 void initColors() {
@@ -153,46 +121,5 @@ void cursesSetUp() {
   use_default_colors();
   curs_set(0);
   initColors();
-  timeout(2);
-}
-WINDOW *setUpWindow(WinInfo *WinInfo, int winNumber) {
-
-  int height = GAME_WINDOW_HEIGHT + 2;
-  int width = GAME_WINDOW_WIDTH + 2;
-  int starty = (LINES - height) / 2;
-  // int startx = (COLS - width) / 2 + width * winNumber;
-  int startx = 2 + width * winNumber;
-  char s[15];
-  sprintf(s, "win %d", winNumber);
-  mvprintw(starty - 1, startx + 2, s);
-
-  refresh();
-  WINDOW *localWindow = create_newwin(height, width, starty, startx);
-  return localWindow;
-}
-
-void *setUpBrickGameWindows(WinInfo *winInfo, WINDOW **windows, int winCount) {
-  for (int i = 0; i < winCount; i++) {
-    windows[i] = setUpWindow(&winInfo[i], i);
-  }
-}
-
-void setUpGameManager(GameManager *gameManager, Brick *bricks, int **field) {
-  init_game_manager(gameManager);
-  gameManager->current_brick = 0;
-  gameManager->bricks = bricks;
-  gameManager->winInfo.height = GAME_WINDOW_HEIGHT;
-  gameManager->winInfo.width = GAME_WINDOW_WIDTH;
-  gameManager->winInfo.startx = GAME_WINDOW_STARTX;
-  gameManager->winInfo.starty = GAME_WINDOW_STARTY;
-  gameManager->colorCount = COLOR_COUNT;
-  gameManager->field = field;
-  // calcBrickBordesrs(&gameManager);
-}
-
-void setUp(WinInfo *winInfo, WINDOW **windows, int winCount,
-           GameManager *gameManager, Brick *bricks, int **field) {
-  cursesSetUp();
-  setUpBrickGameWindows(winInfo, windows, winCount);
-  setUpGameManager(gameManager, bricks, field);
+  timeout(0);
 }

@@ -7,7 +7,7 @@
 
 int moveBrick(GameManager *gameManager, Brick *oldBrick, int direction,
               int angle);
-void resetBrick(GameManager *gameManager);
+int resetBrick(GameManager *gameManager);
 int handleAction(GameManager *gm, int direction, int angle);
 int fullLineHandler(GameManager *gm);
 

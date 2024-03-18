@@ -30,6 +30,7 @@ int checkCollision(GameManager *gameManager, Brick *brick, int direction) {
       result = checkCollisionBrick(gameManager->field, brick, i, direction);
     }
   }
+
   return result;
 }
 //доработка
@@ -73,7 +74,7 @@ int moveBrick(GameManager *gameManager, Brick *oldBrick, int direction,
 
   if (direction != state) {
     moveBrickCords(&newBrick, direction);
-  } else if (angle != 0) {
+  } else if (angle != 0 && direction == state) {
     rotateBrickCords(&newBrick, angle);
   }
 
@@ -88,19 +89,25 @@ int moveBrick(GameManager *gameManager, Brick *oldBrick, int direction,
 
 int handleAction(GameManager *gm, int direction, int angle) {
   int result = 0;
-  result =
-      (result == COL_STATE_CRIT)
-          ? result
-          : moveBrick(gm, &gm->bricks[gm->current_brick], direction, angle);
+  result = moveBrick(gm, &gm->bricks[gm->current_brick], direction, angle);
 
   return result;
 }
 
-void resetBrick(GameManager *gameManager) {
+int resetBrick(GameManager *gameManager) {
   int x = 0;
   int y = 0;
-  born_brick(&gameManager->bricks[gameManager->current_brick], x, y, -1,
+  gameManager->bricks[gameManager->current_brick] =
+      gameManager->bricks[gameManager->current_brick + 1];
+  // born_brick(&gameManager->bricks[gameManager->current_brick], x, y, 6,
+  //            gameManager->colorCount);
+
+  born_brick(&gameManager->bricks[gameManager->current_brick + 1], x, y, -1,
              gameManager->colorCount);
+
+  int isEnd = checkCollision(
+      gameManager, &gameManager->bricks[gameManager->current_brick], down);
+  return isEnd;
 }
 
 void dropLines(GameManager *gm, int lastLine, int linesCount) {
@@ -131,17 +138,15 @@ int isLineFull(GameManager *gm, int lineId) {
 
 int fullLineHandler(GameManager *gm) {
   int lastLine = 0;
-  int result = 0;
   int fullLines = 0;
   for (int i = 0; i < gm->winInfo.height; i++) {
     if (isLineFull(gm, i) != 0) {
       fullLines++;
       lastLine = i;
-      result = 1;
     }
   }
-  if (result) {
+  if (fullLines != 0) {
     dropLines(gm, lastLine, fullLines);
   }
-  return result;
+  return fullLines * 100;
 }
