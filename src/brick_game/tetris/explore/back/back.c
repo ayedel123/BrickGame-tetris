@@ -113,16 +113,54 @@ int checkCollision(GameManager *gameManager, int direction) {
   return res;
 }
 
-int moveBrick(GameManager *gameManager, int direction) {
-  move_cursor(gameManager, direction);
-  move_cursor(gameManager, -direction);
+int checkOutOfBounds(Brick * brick,int cordI,int width,int height){
+  int brickX =  brick->x + brick->cords[cordI][0];
+  int brickY =  brick->y + brick->cords[cordI][1];
+int result = (brickX<=0||brickX>=width)?1:0;
+result = (result ||brickY<=0||brickY>=height)?1:0;
+return result;
+}
 
-  Cursor *local_cursor = &gameManager->cursor;
-  Brick *local_brick = &gameManager->bricks[gameManager->current_brick];
-  int res = checkCollision(gameManager, direction);
-  if (res == 0) {
-    move_cursor(gameManager, direction);
+int checkCollision2(GameManager *gameManager,Brick * brick){
+  int result = 0;
+  for(int i=0;i<4&&result==0;i++){
+    result = checkOutOfBounds(brick,i,gameManager->winInfo.width,gameManager->winInfo.height);
   }
+  return result;
+}
+//доработка
+
+
+int moveBrick2(GameManager *gameManager,Brick * brick ,int direction){
+  Brick localBrick = *brick;
+  if(direction==right || direction== left){
+    localBrick.x+=direction;
+  }
+  if(direction==top || direction== down){
+    localBrick.y+=direction/2;
+  }
+  for(int i =0;i<4;i++){
+    gameManager->field[brick->y+brick->cords[i][1]][brick->x+brick->cords[i][0]]=0;
+  }
+ 
+  for(int i =0;i<4;i++){
+    gameManager->field[localBrick.y+localBrick.cords[i][1]][localBrick.x+localBrick.cords[i][0]]=1;
+  }
+  *brick=localBrick;
+  return 0;
+}
+
+int moveBrick(GameManager *gameManager, int direction) {
+  //move_cursor(gameManager, direction);
+  //move_cursor(gameManager, -direction);
+  int res = checkCollision(gameManager, direction);
+  moveBrick2(gameManager,&gameManager->bricks[gameManager->current_brick],direction);
+  
+  if (checkCollision2(gameManager,&gameManager->bricks[gameManager->current_brick])!=0) {
+     moveBrick2(gameManager,&gameManager->bricks[gameManager->current_brick],-direction);
+  //move_cursor(gameManager, direction);
+   }
+  
   return res;
 }
 

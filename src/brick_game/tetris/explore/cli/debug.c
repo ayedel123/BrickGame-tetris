@@ -66,6 +66,19 @@ void printTime(WINDOW *debugWin, long long time, int *y, char *s) {
   (*y)++;
 }
 
+void printField(WINDOW *debugWin,GameManager * gameManager, int *y){
+    for(int i =0;i<gameManager->winInfo.height;i++){
+   for(int j =0;j<gameManager->winInfo.width;j++){
+    if(gameManager->field[i][j]==0){
+      mvwprintw(debugWin,i+*y,j, "0");
+      }else{
+       mvwprintw(debugWin,i+*y,j, "1");
+      }
+
+  } 
+  }
+}
+
 void debugInfo(WINDOW *debugWin, GameManager *gameManager, int direction,
                long long time) {
   char s[255];
@@ -73,6 +86,7 @@ void debugInfo(WINDOW *debugWin, GameManager *gameManager, int direction,
   printCursorInfo(debugWin, gameManager, direction, &y, s);
   printBrickBorder(debugWin, gameManager, &y, s);
   printTime(debugWin, time, &y, s);
+  printField(debugWin,gameManager, &y);
   // printBrick(debugWin, gameManager, &y, s);
   //    sprintf(s, "bd %3d %3d", gameManager.brickBorder.right,
   //            gameManager.brickBorder.left);

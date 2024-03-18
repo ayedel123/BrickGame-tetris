@@ -26,5 +26,7 @@ void born_brick(Brick *brick, int x, int y, int brick_type, int colorCount) {
   // int brick_type = 0;
 
   *brick = BRICKS_TYPES[brick_type];
+  brick->x=x;
+  brick->y=y;
   brick->color = (rand() % colorCount)+1;
 }

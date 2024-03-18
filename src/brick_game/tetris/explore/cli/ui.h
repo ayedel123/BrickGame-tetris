@@ -8,6 +8,7 @@
 #include "debug.h"
 #include "game_window.h"
 #include "window.h"
+#include <stdlib.h>
 
 #define KEY_ESC 27
 

@@ -13,6 +13,8 @@ typedef struct GameManager {
   int deadDot;
   int colorCount;
 
+  int **field;
+
 } GameManager;
 
 void init_game_manager(GameManager *gameManager);

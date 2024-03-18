@@ -17,7 +17,6 @@
 // void print_win_params(WIN *p_win);
 // void create_box(WIN *WIN, bool flag);
 
-
 WINDOW *create_newwin(int height, int width, int starty, int startx);
 void destroy_win(WINDOW *local_win);
 

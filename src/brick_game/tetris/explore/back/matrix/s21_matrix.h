@@ -25,4 +25,4 @@ typedef struct matrix_struct {
 } matrix_t;
 int s21_mult_matrix(matrix_t *A, matrix_t *B, matrix_t *result);
 void copy_matrix(matrix_t *src, matrix_t *dest);
-#endif // _S21_MATRIX_H_
+#endif  // _S21_MATRIX_H_
