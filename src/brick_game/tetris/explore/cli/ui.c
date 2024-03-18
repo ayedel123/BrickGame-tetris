@@ -1,7 +1,7 @@
 #include "ui.h"
 
-#include <sys/time.h>
 #include "uiFan.h"
+#include <sys/time.h>
 
 long long GetTimeInMS() {
   struct timeval tv;
@@ -13,16 +13,16 @@ long long GetTimeInMS() {
 void fixCursor(int *x, int *y, int rs, int ls);
 void drawBrick(WINDOW *win, Brick *brick, GameManager *gameManager);
 void setUp(WinInfo *winInfo, WINDOW **windows, int winCount,
-           GameManager *gameManager, Brick *bricks,int **field);
+           GameManager *gameManager, Brick *bricks, int **field);
 WINDOW *setUpWindow(WinInfo *WinInfo, int winNumber);
 int inputHandler(int *direction, int *angle);
 
-int initField(int ***field,int rows,int cols){
-  *field = (int**)calloc(rows, sizeof(int*));
-    for (int i = 0; i < rows; i++) {
-        (*field)[i] = (int*)calloc(cols, sizeof(int));
-    }
-    return 0;
+int initField(int ***field, int rows, int cols) {
+  *field = (int **)calloc(rows, sizeof(int *));
+  for (int i = 0; i < rows; i++) {
+    (*field)[i] = (int *)calloc(cols, sizeof(int));
+  }
+  return 0;
 }
 
 int main(int argc, char *argv[]) {
@@ -39,13 +39,12 @@ int main(int argc, char *argv[]) {
   int currentBrick = 0;
   GameManager gameManager;
 
-
-  int ** field=NULL;
-  initField(&field,100,100);
-  setUp(winInfo, windows, 3, &gameManager, bricks,field);
+  int **field = NULL;
+  initField(&field, 100, 100);
+  setUp(winInfo, windows, 3, &gameManager, bricks, field);
 
   int direction = 0;
-  born_brick(&bricks[0], 1, 1, -1, COLOR_COUNT);
+  born_brick(&bricks[0], 1, 1, 1, COLOR_COUNT);
   calcBrickBordesrs(&gameManager);
 
   // wprintw("Время выполнения программы: %f секунд\n", cpu_time_used);
@@ -54,39 +53,21 @@ int main(int argc, char *argv[]) {
   long long endTime = 0;
   int angle = 0;
   int forcedMove = 0;
-
- 
-
-
+  windows[gameWin] = setUpWindow(&winInfo[gameWin], gameWin);
   while (ch != 'O' && ch != 'o') {
 
     int keyVal = inputHandler(&direction, &angle);
-    if (angle) {
-      rotate(&gameManager, angle);
-    }
     debugInfo(windows[debugWin], &gameManager, direction, endTime - startTime);
-    wclear(windows[gameWin]);
-    if (keyVal == 0) {
-        collision = moveBrick(&gameManager, direction);
-        //windows[gameWin] = setUpWindow(&winInfo[gameWin], gameWin);
-        windows[gameWin] = setUpWindow(&winInfo[gameWin], gameWin);
-        drawField(windows[gameWin],&gameManager);
-       
 
-    }
-  
-  
-      
-  
+    drawField(windows[gameWin], &gameManager);
+
+    collision = handleAction(&gameManager, direction, angle);
+
     if (collision == COL_STATE_CRIT) {
       resetBrick(&gameManager);
-      deleteDots(&gameManager);
+      fullLineHandler(&gameManager);
+      // deleteDots(&gameManager);
     }
-    keyVal = 1;
-    collision = COL_STATE_NO_COL;
-    forcedMove = 0;
-    angle = 0;
-    direction = 0;
   }
 
   endwin(); /* End curses mode		  */
@@ -97,7 +78,8 @@ int main(int argc, char *argv[]) {
 int inputHandler(int *direction, int *angle) {
   int ch = getch();
   int res = 0;
-  int result = 0;
+  *direction = 0;
+  *angle = 0;
   const char str[2] = {
       ch,
   };
@@ -130,13 +112,12 @@ int inputHandler(int *direction, int *angle) {
   default:
     res = 1;
     *direction = 0;
+    *angle = 0;
     break;
   }
 
   return res;
 }
-
-
 
 void drawBrick(WINDOW *win, Brick *brick, GameManager *gameManager) {
   wattron(win, COLOR_PAIR(brick->color));
@@ -150,7 +131,6 @@ void drawBrick(WINDOW *win, Brick *brick, GameManager *gameManager) {
   wattroff(win, COLOR_PAIR(brick->color));
   wrefresh(win);
 }
-
 
 void fixCursor(int *x, int *y, int rs, int ls) {
 
@@ -195,8 +175,8 @@ void cursesSetUp() {
 }
 WINDOW *setUpWindow(WinInfo *WinInfo, int winNumber) {
 
-  int height = GAME_WINDOW_HEIGHT+2;
-  int width = GAME_WINDOW_WIDTH+2;
+  int height = GAME_WINDOW_HEIGHT + 2;
+  int width = GAME_WINDOW_WIDTH + 2;
   int starty = (LINES - height) / 2;
   // int startx = (COLS - width) / 2 + width * winNumber;
   int startx = 2 + width * winNumber;
@@ -215,7 +195,7 @@ void *setUpBrickGameWindows(WinInfo *winInfo, WINDOW **windows, int winCount) {
   }
 }
 
-void setUpGameManager(GameManager *gameManager, Brick *bricks,int **field) {
+void setUpGameManager(GameManager *gameManager, Brick *bricks, int **field) {
   init_game_manager(gameManager);
   gameManager->current_brick = 0;
   gameManager->bricks = bricks;
@@ -232,8 +212,8 @@ void setUpGameManager(GameManager *gameManager, Brick *bricks,int **field) {
 }
 
 void setUp(WinInfo *winInfo, WINDOW **windows, int winCount,
-           GameManager *gameManager, Brick *bricks,int **field) {
+           GameManager *gameManager, Brick *bricks, int **field) {
   cursesSetUp();
   setUpBrickGameWindows(winInfo, windows, winCount);
-  setUpGameManager(gameManager, bricks,field);
+  setUpGameManager(gameManager, bricks, field);
 }

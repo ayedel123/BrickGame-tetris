@@ -66,16 +66,38 @@ void printTime(WINDOW *debugWin, long long time, int *y, char *s) {
   (*y)++;
 }
 
-void printField(WINDOW *debugWin,GameManager * gameManager, int *y){
-    for(int i =0;i<gameManager->winInfo.height;i++){
-   for(int j =0;j<gameManager->winInfo.width;j++){
-    if(gameManager->field[i][j]==0){
-      mvwprintw(debugWin,i+*y,j, "0");
-      }else{
-       mvwprintw(debugWin,i+*y,j, "1");
+void printField(WINDOW *debugWin, GameManager *gameManager, int *y) {
+  *y=1;
+  for (int i = 0; i < gameManager->winInfo.height; i++) {
+    for (int j = 0; j < gameManager->winInfo.width; j++) {
+      if (gameManager->field[i][j] == 0) {
+        mvwprintw(debugWin, i + *y, j, "0");
+      } else {
+        mvwprintw(debugWin, i + *y, j, "1");
       }
+    }
+  }
+}
 
-  } 
+void collisionRes(WINDOW *debugWin, GameManager* gm, int direction) {
+
+  int res = 0;
+  int **field = gm->field;
+  Brick brick = gm->bricks[gm->current_brick];
+  if (direction == right || direction == left)
+    brick.x += direction;
+  if (direction == down || direction == top)
+    brick.y += direction / 2;
+  for (int i = 0; i < 4; i++) {
+    res +=
+        (field[brick.y + brick.cords[i][1]][brick.x + brick.cords[i][0]] == 0)
+            ? 0
+            : COL_STATE_COL;
+  }
+  if (res) {
+    mvwprintw(debugWin, 1, 1, "1");
+  } else {
+    mvwprintw(debugWin, 1, 1, "1");
   }
 }
 
@@ -86,7 +108,8 @@ void debugInfo(WINDOW *debugWin, GameManager *gameManager, int direction,
   printCursorInfo(debugWin, gameManager, direction, &y, s);
   printBrickBorder(debugWin, gameManager, &y, s);
   printTime(debugWin, time, &y, s);
-  printField(debugWin,gameManager, &y);
+  printField(debugWin, gameManager, &y);
+  //collisionRes(debugWin, gameManager, direction);
   // printBrick(debugWin, gameManager, &y, s);
   //    sprintf(s, "bd %3d %3d", gameManager.brickBorder.right,
   //            gameManager.brickBorder.left);

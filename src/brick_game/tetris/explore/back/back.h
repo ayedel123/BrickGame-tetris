@@ -10,5 +10,7 @@ void calcBrickBordesrs(GameManager *gameManager);
 void resetBrick(GameManager *gameManager);
 int rotate(GameManager *gameManager, int angle);
 void deleteDots(GameManager *gameManager);
+int handleAction(GameManager *gm, int direction, int angle);
+int fullLineHandler(GameManager *gm);
 
 #endif
