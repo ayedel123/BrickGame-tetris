@@ -4,7 +4,8 @@
 #include "debug.h"
 #include "game_window.h"
 #include "window.h"
+#include <ncurses.h>
 
-void drawField(WINDOW *win,GameManager * gameManager);
+void drawField(WINDOW *win, GameManager *gameManager);
 
-#endif 
+#endif

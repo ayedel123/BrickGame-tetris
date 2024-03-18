@@ -9,9 +9,6 @@ long long GetTimeInMS() {
   gettimeofday(&tv, NULL);
   return (((long long)tv.tv_sec) * 1000) + (tv.tv_usec / 1000);
 }
-
-void fixCursor(int *x, int *y, int rs, int ls);
-void drawBrick(WINDOW *win, Brick *brick, GameManager *gameManager);
 void setUp(WinInfo *winInfo, WINDOW **windows, int winCount,
            GameManager *gameManager, Brick *bricks, int **field);
 WINDOW *setUpWindow(WinInfo *WinInfo, int winNumber);
@@ -45,7 +42,6 @@ int main(int argc, char *argv[]) {
 
   int direction = 0;
   born_brick(&bricks[0], 1, 1, 1, COLOR_COUNT);
-  calcBrickBordesrs(&gameManager);
 
   // wprintw("Время выполнения программы: %f секунд\n", cpu_time_used);
   int collision = 0;
@@ -57,11 +53,20 @@ int main(int argc, char *argv[]) {
   while (ch != 'O' && ch != 'o') {
 
     int keyVal = inputHandler(&direction, &angle);
-    debugInfo(windows[debugWin], &gameManager, direction, endTime - startTime);
-
+    // debugInfo(windows[debugWin], &gameManager, direction, endTime -
+    // startTime);
+    //windows[gameWin] = setUpWindow(&winInfo[gameWin], gameWin);
     drawField(windows[gameWin], &gameManager);
+    endTime = GetTimeInMS();
 
     collision = handleAction(&gameManager, direction, angle);
+
+    if (endTime - startTime >= 300) {
+      collision = (handleAction(&gameManager, down, 0) == COL_STATE_CRIT)
+                      ? COL_STATE_CRIT
+                      : collision;
+      startTime = GetTimeInMS();
+    }
 
     if (collision == COL_STATE_CRIT) {
       resetBrick(&gameManager);
@@ -83,6 +88,7 @@ int inputHandler(int *direction, int *angle) {
   const char str[2] = {
       ch,
   };
+  ch = tolower(ch);
   switch (ch) {
   case KEY_LEFT:
     *direction = left;
@@ -98,11 +104,11 @@ int inputHandler(int *direction, int *angle) {
     break;
   case '0':
     break;
-  case 'Q':
+  case 'e':
     *angle = -1;
     *direction = 0;
     break;
-  case 'E':
+  case 'q':
     *angle = 1;
     *direction = 0;
     break;
@@ -118,30 +124,6 @@ int inputHandler(int *direction, int *angle) {
 
   return res;
 }
-
-void drawBrick(WINDOW *win, Brick *brick, GameManager *gameManager) {
-  wattron(win, COLOR_PAIR(brick->color));
-  for (int i = 0; i < 4; i++) {
-    if (brick->cords[i][1] != gameManager->deadDot) {
-      mvwprintw(win, brick->y + brick->cords[i][1],
-                brick->x + brick->cords[i][0], " ");
-    }
-  }
-  wmove(win, brick->y + brick->cords[0][1], brick->x + brick->cords[0][0]);
-  wattroff(win, COLOR_PAIR(brick->color));
-  wrefresh(win);
-}
-
-void fixCursor(int *x, int *y, int rs, int ls) {
-
-  *x = (*x >= GAME_WINDOW_WIDTH - 1 - rs) ? GAME_WINDOW_WIDTH - 2 - rs
-       : (*x <= 0)                        ? 1
-                                          : *x;
-  *y = (*y >= GAME_WINDOW_HEIGHT - 1 - ls) ? GAME_WINDOW_HEIGHT - 2 - ls
-       : (*y <= 0)                        ? 
-                                           : *y;
-}
-
 void refreshAllWin(WINDOW **wins, int winCount) {
   for (int i = 0; i < winCount; i++) {
     wrefresh(wins[i]);
@@ -199,13 +181,10 @@ void setUpGameManager(GameManager *gameManager, Brick *bricks, int **field) {
   init_game_manager(gameManager);
   gameManager->current_brick = 0;
   gameManager->bricks = bricks;
-  gameManager->cursor.x = 1;
-  gameManager->cursor.y = 1;
   gameManager->winInfo.height = GAME_WINDOW_HEIGHT;
   gameManager->winInfo.width = GAME_WINDOW_WIDTH;
   gameManager->winInfo.startx = GAME_WINDOW_STARTX;
   gameManager->winInfo.starty = GAME_WINDOW_STARTY;
-  gameManager->deadDot = -100 * GAME_WINDOW_HEIGHT;
   gameManager->colorCount = COLOR_COUNT;
   gameManager->field = field;
   // calcBrickBordesrs(&gameManager);

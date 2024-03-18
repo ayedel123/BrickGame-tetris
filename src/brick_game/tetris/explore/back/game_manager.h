@@ -6,11 +6,8 @@
 
 typedef struct GameManager {
   WinInfo winInfo;
-  Cursor cursor;
   int current_brick;
   Brick *bricks;
-  BrickBorder brickBorder;
-  int deadDot;
   int colorCount;
 
   int **field;

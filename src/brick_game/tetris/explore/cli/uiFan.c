@@ -13,17 +13,19 @@
 //   wrefresh(win);
 // }
 
-void drawField(WINDOW *win,GameManager * gameManager) {
+void drawField(WINDOW *win, GameManager *gameManager) {
 
-  for(int i =0;i<gameManager->winInfo.height;i++){
-   for(int j =0;j<gameManager->winInfo.width;j++){
-    if(gameManager->field[i][j]==0){
-      mvwprintw(win,i+1,j+1, " ");
-      }else{
-       mvwprintw(win,i+1,j+1, "0");
+  for (int i = 0; i < gameManager->winInfo.height; i++) {
+    for (int j = 0; j < gameManager->winInfo.width; j++) {
+      wattron(win, COLOR_PAIR(gameManager->field[i][j]));
+      if (gameManager->field[i][j] == 0) {
+        mvwprintw(win, i + 1, j + 1, " ");
+      } else {
+        mvwprintw(win, i + 1, j + 1, "0");
       }
-
-  } 
+      wattroff(win, COLOR_PAIR(gameManager->field[i][j]));
+    }
   }
+
   wrefresh(win);
 }
