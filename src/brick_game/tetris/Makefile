@@ -5,7 +5,7 @@ UI = cli/*.c
 TETRIS_BACK = back/bricks/*.c back/brickMovement/*.c back/fullLineHandler/*.c back/gameManager/*.c back/field/*.c
 TETRIS = tetris/*.c
 
-TEST = test/*.c test/collisionTest/*.c
+TEST_SOURCES = test/*.c test/collisionTest/*.c test/movementTest/*.c test/fullLineHandlerTest/*.c
 
 CURSES = -lncurses
 CHECK_FLAGS = -lcheck
@@ -32,7 +32,7 @@ bepis: clean
 	./bepis
 
 test: clean
-	$(CC) $(TETRIS_BACK) $(TEST) $(CHECK_FLAGS) -o test.out
+	$(CC) $(TETRIS_BACK) $(TEST_SOURCES) $(CHECK_FLAGS) -o test.out
 	./test.out
 
 

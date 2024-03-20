@@ -15,6 +15,7 @@ START_TEST(case_1) {
                            : status;
   }
   ck_assert_int_eq(status, COL_STATE_COL);
+  deleteField(field, height);
 }
 END_TEST
 
@@ -33,6 +34,7 @@ START_TEST(case_2) {
                            : status;
   }
   ck_assert_int_eq(status, COL_STATE_CRIT);
+  deleteField(field, height);
 }
 END_TEST
 
@@ -51,6 +53,7 @@ START_TEST(case_3) {
                            : status;
   }
   ck_assert_int_eq(status, COL_STATE_COL);
+  deleteField(field, height);
 }
 END_TEST
 
@@ -69,6 +72,7 @@ START_TEST(case_4) {
                            : status;
   }
   ck_assert_int_eq(status, COL_STATE_COL);
+  deleteField(field, height);
 }
 END_TEST
 

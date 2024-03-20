@@ -18,6 +18,7 @@ START_TEST(case_1) {
   int status = 0;
   status = checkCollision(&gm, &brick1, DIR_RIGHT);
   ck_assert_int_eq(status, COL_STATE_COL);
+  deleteField(field, height);
 }
 END_TEST
 
@@ -37,6 +38,7 @@ START_TEST(case_2) {
   int status = 0;
   status = checkCollision(&gm, &brick1, DIR_DOWN);
   ck_assert_int_eq(status, COL_STATE_CRIT);
+  deleteField(field, height);
 }
 END_TEST
 
@@ -55,6 +57,7 @@ START_TEST(case_3) {
   field[0][4] = 1;
   int status = checkCollision(&gm, &brick1, DIR_TOP);
   ck_assert_int_eq(status, COL_STATE_COL);
+  deleteField(field, height);
 }
 
 END_TEST
@@ -75,6 +78,7 @@ START_TEST(case_4) {
   field[0][1] = 1;
   int status = checkCollision(&gm, &brick1, DIR_LEFT);
   ck_assert_int_eq(status, COL_STATE_COL);
+  deleteField(field, height);
 }
 END_TEST
 
@@ -93,6 +97,7 @@ START_TEST(case_5) {
   int status = checkCollision(&gm, &brick, DIR_LEFT);
 
   ck_assert_int_eq(status, COL_STATE_NO);
+  deleteField(field, height);
 }
 END_TEST
 
@@ -111,6 +116,7 @@ START_TEST(case_6) {
   int status = checkCollision(&gm, &brick, DIR_LEFT);
 
   ck_assert_int_eq(status, COL_STATE_COL);
+  deleteField(field, height);
 }
 END_TEST
 
@@ -129,6 +135,7 @@ START_TEST(case_7) {
 
   int status = checkCollision(&gm, &brick, DIR_DOWN);
   ck_assert_int_eq(status, COL_STATE_CRIT);
+  deleteField(field, height);
 }
 END_TEST
 
@@ -147,6 +154,7 @@ START_TEST(case_8) {
 
   int status = checkCollision(&gm, &brick, DIR_DOWN);
   ck_assert_int_eq(status, COL_STATE_COL);
+  deleteField(field, height);
 }
 END_TEST
 

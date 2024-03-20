@@ -9,12 +9,16 @@ void clearField(int **field, int rows, int cols) {
   }
 }
 
-void deleteField(int **field, int rows) {
-
+int deleteField(int **field, int rows) {
+  if (field == NULL) {
+    return 1;
+  }
   for (int i = 0; i < rows; i++) {
     free(field[i]);
+    field[i] = NULL;
   }
   free(field);
+  return 0;
 }
 
 int initField(int ***field, int rows, int cols) {

@@ -4,7 +4,8 @@
 #include "../GameManager/gameManager.h"
 
 int checkCollision(GameManager *gameManager, Brick *brick, int direction);
-int checkOutOfBounds(Brick *brick, int cordI, int width, int height);
+int checkOutOfBounds(Brick *brick, int cordI, int width, int height,
+                     int direction);
 int checkCollisionBrick(int **field, Brick *brick, int cordI, int direction);
 
 #endif
