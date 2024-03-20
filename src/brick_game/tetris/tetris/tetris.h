@@ -16,9 +16,7 @@
 
 typedef enum { gameWin, menuWin, debugWin } windowsEnum;
 
-void deleteField(int **field, int rows);
-void clearField(int **field, int rows, int cols);
-int initField(int ***field, int rows, int cols);
+
 int gameLoop(GameManager *gameManager, WINDOW **windows);
 
 #define GAME_SPEED 300

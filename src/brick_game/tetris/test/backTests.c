@@ -1,4 +1,4 @@
-#include "back_tests.h"
+#include "backTests.h"
 
 void run_testcase(Suite *testcase) {
   SRunner *sr = srunner_create(testcase);
@@ -8,7 +8,8 @@ void run_testcase(Suite *testcase) {
 }
 
 void run_tests(Suite *cases[]) {
-  for (; *cases != NULL; cases++) run_testcase(*cases);
+  for (; *cases != NULL; cases++)
+    run_testcase(*cases);
 }
 
 int main(void) {

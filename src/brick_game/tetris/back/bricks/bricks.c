@@ -11,13 +11,12 @@ const Brick BRICKS_TYPES[BRICK_TYPES_COUNT] = {
     {{{0, 1}, {1, 1}, {2, 1}, {1, 0}}, 0, 0, 0},
     {{{0, 0}, {1, 0}, {1, 1}, {2, 1}}, 0, 0, 0}};
 /*
-  0:  0000  1:  00   2:   0  3: 00  4:   00
-                 00     000     00      00
+  0:  0000  1:  000   2:   0  3: 00  4:   00
+                  0      000     00      00
 
   5:   0   6:  00
       000       00
 */
-
 
 void bornBrick(Brick *brick, int x, int y, int brickType, int colorCount) {
 

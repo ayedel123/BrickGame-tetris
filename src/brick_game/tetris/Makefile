@@ -2,8 +2,11 @@ CC = gcc
 CFLAGS =  -Werror -Wall -Wextra -std=c11
 PILK = pilk.c
 UI = cli/*.c
-TETRIS_BACK = back/bricks/*.c back/brickMovement/*.c back/fullLineHandler/*.c back/gameManager/*.c
+TETRIS_BACK = back/bricks/*.c back/brickMovement/*.c back/fullLineHandler/*.c back/gameManager/*.c back/field/*.c
 TETRIS = tetris/*.c
+
+TEST = test/*.c test/collisionTest/*.c
+
 CURSES = -lncurses
 CHECK_FLAGS = -lcheck
 LIBS = $(CURSES)
@@ -29,8 +32,9 @@ bepis: clean
 	./bepis
 
 test: clean
-	$(CC) $(BACK) back/test/*.c back/test/collision_tests/*.c $(CHECK_FLAGS) -o test.out
+	$(CC) $(TETRIS_BACK) $(TEST) $(CHECK_FLAGS) -o test.out
 	./test.out
+
 
 clang:
 	@cp ../../../../materials/linters/.clang-format .clang-format
