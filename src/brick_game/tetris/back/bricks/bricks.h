@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include "defines.h"
+#include "../../common/defines.h"
 
 #define BRICK_TYPES_COUNT 7
 
@@ -24,9 +24,7 @@ typedef struct {
 
 extern const Brick BRICKS_TYPES[BRICK_TYPES_COUNT];
 
-void born_brick(Brick *brick, int x, int y, int brick_type, int colorCount);
-void set_anchor(Brick *brick, int x, int y);
+void bornBrick(Brick *brick, int x, int y, int brickType, int colorCount);
 
-// typedef enum collison_code { no_col, bot_only, right_only, left_only ,bot};
 
 #endif

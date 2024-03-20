@@ -1,5 +1,5 @@
 CC := gcc
-CFLAGS := -I inc -std=c99 -Wall -Werror -Wpedantic
+CFLAGS := -I inc -std=c99 -Wall -Werror -Wpedantic -stdc11
 OBJS_FSMSWITCHCASE := out/frogger.o out/fsm.o out/backend.o out/frontend.o
 OBJS_FSMTABLE := out/frogger.o out/fsm_matrix.o out/backend.o out/frontend.o
 

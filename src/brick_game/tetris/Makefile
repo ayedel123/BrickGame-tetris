@@ -1,15 +1,31 @@
 CC = gcc
+CFLAGS =  -Werror -Wall -Wextra -std=c11
 PILK = pilk.c
 UI = cli/*.c
-BACK = back/*.c
+TETRIS_BACK = back/bricks/*.c back/brickMovement/*.c back/fullLineHandler/*.c back/gameManager/*.c
+TETRIS = tetris/*.c
 CURSES = -lncurses
 CHECK_FLAGS = -lcheck
+LIBS = $(CURSES)
 
 pilk:
 	$(CC) $(PILK)
 
+s21_matrix_oop.a: s21_matrix_oop.o
+	ar rc s21_matrix_oop.a $(LIB_OBJECT)
+	ranlib s21_matrix_oop.a
+	make clean_libobj
+
+rebuild_lib: clean s21_matrix_oop.a
+
+install: ${TETRIS_BACK}  ${UI} ${TETRIS}
+		$(CC) ${CFLAGS} $(LIBS) $^ -o tetris.out
+
+run: 
+	./tetris.out
+
 bepis: clean
-	$(CC) $(BACK) $(UI) $(CURSES) -o bepis
+	$(CC) $(TETRIS_BACK) $(UI) $(TETRIS) $(LIBS) -o bepis
 	./bepis
 
 test: clean

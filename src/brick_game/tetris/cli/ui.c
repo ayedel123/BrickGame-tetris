@@ -1,37 +1,24 @@
 #include "ui.h"
 
-// void drawBrick(WINDOW *win, Brick *brick, GameManager *gameManager) {
-//   wattron(win, COLOR_PAIR(brick->color));
-//   for (int i = 0; i < 4; i++) {
-//     if (brick->cords[i][1] != gameManager->deadDot) {
-//       mvwprintw(win, brick->y + brick->cords[i][1],
-//                 brick->x + brick->cords[i][0], " ");
-//     }
-//   }
-//   wmove(win, brick->y + brick->cords[0][1], brick->x + brick->cords[0][0]);
-//   wattroff(win, COLOR_PAIR(brick->color));
-//   wrefresh(win);
-// }
+void drawField(WINDOW *win, GameManager *gm) {
 
-void drawField(WINDOW *win, GameManager *gameManager) {
+  for (int i = 0; i < gm->winInfo.height; i++) {
+    for (int j = 0; j < gm->winInfo.width; j++) {
 
-  for (int i = 0; i < gameManager->winInfo.height; i++) {
-    for (int j = 0; j < gameManager->winInfo.width; j++) {
-
-      if (gameManager->field[i][j] == 0) {
-        mvwprintw(win, i + 1, j + 1, " ");
-      } else {
-        wattron(win, COLOR_PAIR(gameManager->field[i][j]));
+      if (gm->field[i][j] != 0) {
+        wrefresh(win);
+        wattron(win, COLOR_PAIR(gm->field[i][j]));
         mvwprintw(win, i + 1, j + 1, "0");
-        wattroff(win, COLOR_PAIR(gameManager->field[i][j]));
-      }
+        wattroff(win, COLOR_PAIR(gm->field[i][j]));
+      } else
+        mvwprintw(win, i + 1, j + 1, " ");
     }
   }
 
   wrefresh(win);
 }
 
-WINDOW *setUpWindow(WinInfo *WinInfo, int winNumber) {
+WINDOW *setUpWindow(int winNumber) {
 
   int height = GAME_WINDOW_HEIGHT + 2;
   int width = GAME_WINDOW_WIDTH + 2;
@@ -42,14 +29,15 @@ WINDOW *setUpWindow(WinInfo *WinInfo, int winNumber) {
   mvprintw(starty - 1, startx + 2, s);
 
   refresh();
-  WINDOW *localWindow = create_newwin(height, width, starty, startx);
+  WINDOW *localWindow = createNewWin(height, width, starty, startx);
   return localWindow;
 }
 
-void *setUpBrickGameWindows(WinInfo *winInfo, WINDOW **windows, int winCount) {
+int *setUpBrickGameWindows(WINDOW **windows, int winCount) {
   for (int i = 0; i < winCount; i++) {
-    windows[i] = setUpWindow(&winInfo[i], i);
+    windows[i] = setUpWindow(i);
   }
+  return 0;
 }
 
 int inputHandler(int *direction, int *angle) {
@@ -57,22 +45,19 @@ int inputHandler(int *direction, int *angle) {
   int res = 0;
   *direction = 0;
   *angle = 0;
-  const char str[2] = {
-      ch,
-  };
   ch = tolower(ch);
   switch (ch) {
   case KEY_LEFT:
-    *direction = left;
+    *direction = DIR_LEFT;
     break;
   case KEY_RIGHT:
-    *direction = right;
+    *direction = DIR_RIGHT;
     break;
   case KEY_UP:
-    *direction = top;
+    *direction = DIR_TOP;
     break;
   case KEY_DOWN:
-    *direction = down;
+    *direction = DIR_DOWN;
     break;
   case '0':
     res = 404;
@@ -94,7 +79,6 @@ int inputHandler(int *direction, int *angle) {
     *angle = 0;
     break;
   }
-
   return res;
 }
 

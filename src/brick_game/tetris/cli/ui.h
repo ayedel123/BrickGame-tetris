@@ -2,7 +2,6 @@
 #define __TETRIS_UI__
 #include "../back/back.h"
 #include "debug.h"
-#include "game_window.h"
 #include "window.h"
 #include <ctype.h>
 #include <ncurses.h>
@@ -10,8 +9,8 @@
 #include <time.h>
 
 void drawField(WINDOW *win, GameManager *gameManager);
-WINDOW *setUpWindow(WinInfo *WinInfo, int winNumber);
-void *setUpBrickGameWindows(WinInfo *winInfo, WINDOW **windows, int winCount);
+WINDOW *setUpWindow(int winNumber);
+int *setUpBrickGameWindows(WINDOW **windows, int winCount);
 int inputHandler(int *direction, int *angle);
 void cursesSetUp();
 
