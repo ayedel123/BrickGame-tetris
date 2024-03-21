@@ -6,7 +6,6 @@ START_TEST(case_1) {
   int **field;
   initField(&field, width, height);
   Brick brick1 = BRICKS_TYPES[0];
-  Brick brick2 = BRICKS_TYPES[0];
   bornBrick(&brick1, 1, 0, 0, 7);
   field[0][4] = 1;
   int status = 0;
@@ -25,7 +24,6 @@ START_TEST(case_2) {
   int **field;
   initField(&field, width, height);
   Brick brick1 = BRICKS_TYPES[0];
-  Brick brick2 = BRICKS_TYPES[0];
   bornBrick(&brick1, 1, 1, 0, 7);
   field[1][4] = 1;
   int status = 0;
@@ -44,7 +42,6 @@ START_TEST(case_3) {
   int **field;
   initField(&field, width, height);
   Brick brick1 = BRICKS_TYPES[0];
-  Brick brick2 = BRICKS_TYPES[0];
   bornBrick(&brick1, 1, 0, 0, 7);
   field[0][4] = 1;
   int status = 0;
@@ -63,10 +60,10 @@ START_TEST(case_4) {
   int **field;
   initField(&field, width, height);
   Brick brick1 = BRICKS_TYPES[0];
-  Brick brick2 = BRICKS_TYPES[0];
   bornBrick(&brick1, 1, 0, 0, 7);
   field[0][1] = 1;
   int status = 0;
+  status = 0;
   for (int i = 0; i < 4; i++) {
     status = (status == 0) ? checkCollisionBrick(field, &brick1, i, DIR_LEFT)
                            : status;

@@ -1,7 +1,6 @@
 #include "../backTests.h"
 
 START_TEST(move_brick_cords_case_1) {
-  int status = 0;
   Brick brick = BRICKS_TYPES[0];
   bornBrick(&brick, 1, 0, 0, 7);
   moveBrickCords(&brick, DIR_RIGHT);
@@ -11,7 +10,6 @@ START_TEST(move_brick_cords_case_1) {
 END_TEST
 
 START_TEST(move_brick_cords_case_2) {
-  int status = 0;
   Brick brick = BRICKS_TYPES[0];
   bornBrick(&brick, 1, 0, 0, 7);
   moveBrickCords(&brick, DIR_DOWN);
@@ -21,7 +19,6 @@ START_TEST(move_brick_cords_case_2) {
 END_TEST
 
 START_TEST(rotate_brick_cords_case_1) {
-  int status = 0;
   Brick brick1 = BRICKS_TYPES[0];
   Brick brick2 = BRICKS_TYPES[0];
   bornBrick(&brick1, 0, 0, 0, 7);
@@ -43,7 +40,6 @@ START_TEST(rotate_brick_cords_case_1) {
 END_TEST
 
 START_TEST(rotate_brick_cords_case_2) {
-  int status = 0;
   Brick brick1 = BRICKS_TYPES[0];
   Brick brick2 = BRICKS_TYPES[0];
   bornBrick(&brick1, 0, 0, 0, 7);
@@ -65,7 +61,6 @@ START_TEST(rotate_brick_cords_case_2) {
 END_TEST
 
 START_TEST(rotate_brick_cords_case_3) {
-  int status = 0;
   Brick brick1 = BRICKS_TYPES[0];
   Brick brick2 = BRICKS_TYPES[0];
   bornBrick(&brick1, 0, 0, 6, 7);
@@ -87,7 +82,6 @@ START_TEST(rotate_brick_cords_case_3) {
 END_TEST
 
 START_TEST(move_in_field_case_1) {
-  int status = 0;
   Brick brick1 = BRICKS_TYPES[0];
   bornBrick(&brick1, 0, 0, 3, 7);
   int **field;
@@ -104,7 +98,6 @@ START_TEST(move_in_field_case_1) {
 END_TEST
 
 START_TEST(delete_from_field_case_1) {
-  int status = 0;
   Brick brick1 = BRICKS_TYPES[0];
   bornBrick(&brick1, 0, 0, 5, 7);
   int **field;
@@ -125,7 +118,7 @@ START_TEST(delete_from_field_case_1) {
 }
 END_TEST
 
-Suite *semi_function_suite(void) {
+Suite *semi_move_brick_suite(void) {
   Suite *s;
   TCase *tc;
   s = suite_create("collision_bot");

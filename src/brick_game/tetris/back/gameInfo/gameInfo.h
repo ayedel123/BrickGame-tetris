@@ -7,22 +7,24 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct GameManager {
+typedef struct {
   WinInfo winInfo;
   Brick currentBrick;
   Brick nextBrick;
   int colorCount;
   int points;
   int **field;
-  int lvl;
-  int record;
+  int level;
+  int highScore;
+  int speed;
+  int pause;
 
-} GameManager;
+} GameInfo_t;
 
-void addPoints(GameManager *gm, int points);
+void addPoints(GameInfo_t *gameInfo, int points);
 void writeRecord(const char *filename, int record);
 int readRecord(const char *filename);
-void initGameManager(GameManager *gm, int **field);
-int resetBrick(GameManager *gameManager);
+void initGameInfo(GameInfo_t *gameInfo, int **field, int speed);
+void baseInitGameInfo(GameInfo_t *gameInfo);
 
 #endif

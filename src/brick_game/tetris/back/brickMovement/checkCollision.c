@@ -25,13 +25,13 @@ int checkOutOfBounds(Brick *brick, int cordI, int width, int height,
   return result;
 }
 
-int checkCollision(GameManager *gm, Brick *brick, int direction) {
+int checkCollision(GameInfo_t *gameInfo, Brick *brick, int direction) {
   int result = 0;
-  for (int i = 0; i < 4 && result == 0; i++) {
-    result = checkOutOfBounds(brick, i, gm->winInfo.width, gm->winInfo.height,
-                              direction);
+  for (int i = 0; i < 4 && result == COL_STATE_NO; i++) {
+    result = checkOutOfBounds(brick, i, gameInfo->winInfo.width,
+                              gameInfo->winInfo.height, direction);
     if (result == COL_STATE_NO) {
-      result = checkCollisionBrick(gm->field, brick, i, direction);
+      result = checkCollisionBrick(gameInfo->field, brick, i, direction);
     }
   }
 

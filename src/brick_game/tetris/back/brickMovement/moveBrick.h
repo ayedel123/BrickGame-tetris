@@ -2,10 +2,10 @@
 #define __TETRIS_MOVE_BRICK__
 
 #include "../../common/defines.h"
-#include "../GameManager/gameManager.h"
+#include "../gameInfo/gameInfo.h"
 #include "checkCollision.h"
 
-int moveBrick(GameManager *gameManager, Brick *oldBrick, int direction,
+int moveBrick(GameInfo_t *gameInfo, Brick *oldBrick, int direction,
               int angle);
 void moveBrickInField(int **field, Brick *brick);
 void deleteFromField(int **field, Brick *brick);

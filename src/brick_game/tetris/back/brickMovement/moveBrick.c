@@ -34,22 +34,28 @@ void moveBrickInField(int **field, Brick *brick) {
   }
 }
 
-int moveBrick(GameManager *gameManager, Brick *oldBrick, int direction,
-              int angle) {
+int moveBrick(GameInfo_t *gameInfo, Brick *oldBrick, int direction, int angle) {
   Brick newBrick = *oldBrick;
-  deleteFromField(gameManager->field, oldBrick);
-
-  if (direction != DIR_STATE) {
-    moveBrickCords(&newBrick, direction);
-  } else if (angle != 0 && direction == DIR_STATE) {
-    rotateBrickCords(&newBrick, angle);
+  int result = COL_STATE_NO;
+  for (int i = 0; i < 4 && result == COL_STATE_NO; i++) {
+    result = checkOutOfBounds(oldBrick, i, gameInfo->winInfo.width,
+                              gameInfo->winInfo.height, DIR_STATE);
   }
-
-  int result = checkCollision(gameManager, &newBrick, direction);
   if (result == COL_STATE_NO) {
-    *oldBrick = newBrick;
-  }
-  moveBrickInField(gameManager->field, oldBrick);
+    deleteFromField(gameInfo->field, oldBrick);
 
+    if (direction != DIR_STATE) {
+      moveBrickCords(&newBrick, direction);
+    } else if (angle != 0 && direction == DIR_STATE) {
+      rotateBrickCords(&newBrick, angle);
+    }
+
+    result = checkCollision(gameInfo, &newBrick, direction);
+    if (result == COL_STATE_NO) {
+      *oldBrick = newBrick;
+    }
+
+    moveBrickInField(gameInfo->field, oldBrick);
+  }
   return result;
 }

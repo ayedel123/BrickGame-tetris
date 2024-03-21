@@ -7,6 +7,6 @@
 #include "bricks/bricks.h"
 #include "field/field.h"
 #include "fullLineHandler/fullLineHandler.h"
-#include "gameManager/gameManager.h"
+#include "gameInfo/gameInfo.h"
 
 #endif

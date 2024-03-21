@@ -2,7 +2,7 @@ CC = gcc
 CFLAGS =  -Werror -Wall -Wextra -std=c11
 PILK = pilk.c
 UI = cli/*.c
-TETRIS_BACK = back/bricks/*.c back/brickMovement/*.c back/fullLineHandler/*.c back/gameManager/*.c back/field/*.c
+TETRIS_BACK = back/bricks/*.c back/brickMovement/*.c back/fullLineHandler/*.c back/gameInfo/*.c back/field/*.c
 TETRIS = tetris/*.c
 
 TEST_SOURCES = test/*.c test/collisionTest/*.c test/movementTest/*.c test/fullLineHandlerTest/*.c
@@ -10,6 +10,8 @@ TEST_SOURCES = test/*.c test/collisionTest/*.c test/movementTest/*.c test/fullLi
 CURSES = -lncurses
 CHECK_FLAGS = -lcheck
 LIBS = $(CURSES)
+G_FLAGS = -lpthread -g -fprofile-arcs -ftest-coverage
+
 
 pilk:
 	$(CC) $(PILK)
@@ -22,7 +24,15 @@ s21_matrix_oop.a: s21_matrix_oop.o
 rebuild_lib: clean s21_matrix_oop.a
 
 install: ${TETRIS_BACK}  ${UI} ${TETRIS}
-		$(CC) ${CFLAGS} $(LIBS) $^ -o tetris.out
+		$(CC) $(LIBS) $^ -o tetris.out
+
+gcov_report: clean
+	$(CC) $(CFLAGS) $(TETRIS_BACK) $(TEST_SOURCES) $(CHECK_FLAGS) $(G_FLAGS) -o GcovReport
+	./GcovReport
+	@lcov -t "GcovReport" -o GcovReport.info --no-external -c -d .
+	@genhtml -o report GcovReport.info
+	open ./report/index-sort-f.html
+
 
 run: 
 	./tetris.out
@@ -43,5 +53,7 @@ clang:
 	@rm .clang-format
 
 
-clean:
+clean: clean_gcov_report
 	rm -rf *.o *.out test.out bepis
+clean_gcov_report:
+	rm -rf GcovReport *.gcda *.gcno GcovReport.dSYM *.info report

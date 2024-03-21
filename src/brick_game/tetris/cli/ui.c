@@ -1,15 +1,15 @@
 #include "ui.h"
 
-void drawField(WINDOW *win, GameManager *gm) {
+void drawField(WINDOW *win, GameInfo_t *gameInfo) {
 
-  for (int i = 0; i < gm->winInfo.height; i++) {
-    for (int j = 0; j < gm->winInfo.width; j++) {
+  for (int i = 0; i < gameInfo->winInfo.height; i++) {
+    for (int j = 0; j < gameInfo->winInfo.width; j++) {
 
-      if (gm->field[i][j] != 0) {
+      if (gameInfo->field[i][j] != 0) {
         wrefresh(win);
-        wattron(win, COLOR_PAIR(gm->field[i][j]));
+        wattron(win, COLOR_PAIR(gameInfo->field[i][j]));
         mvwprintw(win, i + 1, j + 1, "0");
-        wattroff(win, COLOR_PAIR(gm->field[i][j]));
+        wattroff(win, COLOR_PAIR(gameInfo->field[i][j]));
       } else
         mvwprintw(win, i + 1, j + 1, " ");
     }
@@ -106,4 +106,24 @@ void cursesSetUp() {
   curs_set(0);
   initColors();
   timeout(0);
+}
+
+void GameOverMessage(WINDOW *win, int width, int height) {
+  mvwprintw(win, height / 2, 1,     "game over");
+  mvwprintw(win, height / 2 + 1, 1, "  press ");
+  mvwprintw(win, height / 2 + 2, 1, " any key ");
+  mvwprintw(win, height / 2 + 3, 1, "to start ");
+  mvwprintw(win, height / 2 + 4, 1, " or 0 ");
+  mvwprintw(win, height / 2 + 5, 1, "to exit ");
+
+  wrefresh(win);
+}
+
+void StartMessage(WINDOW *win, int width, int height) {
+  mvwprintw(win, height / 2 , 2,    "  press ");
+  mvwprintw(win, height / 2 + 1, 2, " any key ");
+  mvwprintw(win, height / 2 + 2, 2, "to start ");
+  mvwprintw(win, height / 2 + 3, 2, "  or 0 ");
+  mvwprintw(win, height / 2 + 4, 2, " to exit ");
+  wrefresh(win);
 }

@@ -13,6 +13,17 @@ typedef enum directions_enum {
   DIR_STATE = 0
 } DIRECTIONS_ENUM;
 
+typedef enum {
+  Start,
+  Pause,
+  Terminate,
+  Left,
+  Right,
+  Up,
+  Down,
+  Action
+} UserAction_t;
+
 #define COL_STATE_NO 0
 #define COL_STATE_COL 1
 #define COL_STATE_CRIT 2
@@ -25,5 +36,7 @@ typedef enum directions_enum {
 #define GAME_WINDOW_STARTY 0
 
 #define COLOR_COUNT 7
+
+#define bool int
 
 #endif

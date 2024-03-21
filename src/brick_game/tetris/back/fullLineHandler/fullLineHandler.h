@@ -1,13 +1,13 @@
 #ifndef __TETRIS_FULL_LINE_HANDLER__
 #define __TETRIS_FULL_LINE_HANDLER__
 
-#include "../gameManager/gameManager.h"
 #include "../brickMovement/checkCollision.h"
+#include "../gameInfo/gameInfo.h"
 
-int fullLineHandler(GameManager *gm);
+int fullLineHandler(GameInfo_t *gameInfo);
 
-int isLineFull(GameManager *gm, int lineId);
-void dropLines(GameManager *gm, int lastLine, int linesCount);
-int resetBrick(GameManager *gm);
+int isLineFull(GameInfo_t *gameInfo, int lineId);
+void dropLines(GameInfo_t *gameInfo, int lastLine, int linesCount);
+int resetBrick(GameInfo_t *gameInfo);
 
 #endif

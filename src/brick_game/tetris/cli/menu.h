@@ -6,6 +6,6 @@
 #include "window.h"
 #include <ncurses.h>
 
-void printMenu(WINDOW *menuWin, GameManager *gameManager);
+void printMenu(WINDOW *menuWin, GameInfo_t *gameInfo,int state);
 
 #endif
