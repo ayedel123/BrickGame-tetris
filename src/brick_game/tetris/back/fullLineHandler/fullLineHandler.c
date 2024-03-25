@@ -4,7 +4,8 @@ void dropLines(GameInfo_t *gameInfo, int lastLine, int linesCount) {
   for (int i = 0; i < lastLine; i++) {
     for (int j = 0; j < gameInfo->winInfo.width; j++) {
       if (lastLine - i - linesCount >= 0) {
-        gameInfo->field[lastLine - i][j] = gameInfo->field[lastLine - i - linesCount][j];
+        gameInfo->field[lastLine - i][j] =
+            gameInfo->field[lastLine - i - linesCount][j];
         gameInfo->field[lastLine - i - linesCount][j] = 0;
       } else {
         gameInfo->field[lastLine - i][j] = 0;

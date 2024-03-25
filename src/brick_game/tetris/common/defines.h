@@ -1,6 +1,8 @@
 #ifndef __DEFINES__
 #define __DEFINES__
 
+typedef enum { GAME_WIN, INFO_WIN, DEBUG_WIN } WINDOWS_ENUM;
+
 typedef struct WinInfo {
   int height, width;
 } WinInfo;

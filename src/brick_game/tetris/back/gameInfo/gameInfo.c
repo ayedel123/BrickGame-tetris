@@ -1,6 +1,7 @@
 #include "gameInfo.h"
 
-void initGameInfo(GameInfo_t *gameInfo, int **field, int speed) {
+void initGameInfo(GameInfo_t *gameInfo, int **field, int speed,
+                  int acceleration) {
   gameInfo->winInfo.height = GAME_WINDOW_HEIGHT;
   gameInfo->winInfo.width = GAME_WINDOW_WIDTH;
   gameInfo->colorCount = COLOR_COUNT;
@@ -13,6 +14,7 @@ void initGameInfo(GameInfo_t *gameInfo, int **field, int speed) {
   gameInfo->level = 1;
   gameInfo->speed = speed;
   gameInfo->highScore = readRecord("record");
+  gameInfo->acceleration = acceleration;
 }
 
 void baseInitGameInfo(GameInfo_t *gameInfo) {
@@ -25,6 +27,7 @@ void baseInitGameInfo(GameInfo_t *gameInfo) {
   gameInfo->level = 0;
   gameInfo->points = 0;
   gameInfo->highScore = 0;
+  gameInfo->acceleration = 0;
 }
 
 void writeRecord(const char *filename, int record) {
@@ -56,6 +59,6 @@ void addPoints(GameInfo_t *gameInfo, int points) {
   }
 
   if (gameInfo->points >= 600 * gameInfo->level && gameInfo->level < 10) {
-    gameInfo->level += 1;
+    gameInfo->level += points / 600;
   }
 }

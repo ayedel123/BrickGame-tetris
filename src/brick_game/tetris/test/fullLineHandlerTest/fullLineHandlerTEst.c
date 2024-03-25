@@ -73,7 +73,6 @@ START_TEST(case_3) {
   gameInfo.field[2][1] = 2;
   gameInfo.field[2][2] = 3;
   gameInfo.field[2][3] = 4;
-
   int points = fullLineHandler(&gameInfo);
   ck_assert_int_eq(field[2][0], 1);
   ck_assert_int_eq(field[2][1], 2);

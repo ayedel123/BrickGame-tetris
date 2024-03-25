@@ -1,45 +1,51 @@
 CC = gcc
 CFLAGS =  -Werror -Wall -Wextra -std=c11
 PILK = pilk.c
-UI = cli/*.c
+FRONTEND = ../../gui/cli/*.c
 TETRIS_BACK = back/bricks/*.c back/brickMovement/*.c back/fullLineHandler/*.c back/gameInfo/*.c back/field/*.c
 TETRIS = tetris/*.c
-
-TEST_SOURCES = test/*.c test/collisionTest/*.c test/movementTest/*.c test/fullLineHandlerTest/*.c
+TEST_SOURCES = test/*.c test/collisionTest/*.c test/movementTest/*.c test/fullLineHandlerTest/*.c test/addPointsTest/*.c
 
 CURSES = -lncurses
 CHECK_FLAGS = -lcheck
 LIBS = $(CURSES)
 G_FLAGS = -lpthread -g -fprofile-arcs -ftest-coverage
+DIST_DIR = ../../game_archive
 
+OPEN_COMMAND =open
+ifeq ($(OS), Linux)
+	OPEN_COMMAND=xdg-open
+else
+	OPEN_COMMAND=open
+endif
 
-pilk:
-	$(CC) $(PILK)
+all: gcov_report install run
 
-s21_matrix_oop.a: s21_matrix_oop.o
-	ar rc s21_matrix_oop.a $(LIB_OBJECT)
-	ranlib s21_matrix_oop.a
-	make clean_libobj
-
-rebuild_lib: clean s21_matrix_oop.a
-
-install: ${TETRIS_BACK}  ${UI} ${TETRIS}
+install: ${TETRIS_BACK} $(FRONTEND) ${TETRIS}
 		$(CC) $(LIBS) $^ -o tetris.out
 
-gcov_report: clean
+uninstall:
+	rm -f tetris.out
+
+gcov_report: clean clean_record
 	$(CC) $(CFLAGS) $(TETRIS_BACK) $(TEST_SOURCES) $(CHECK_FLAGS) $(G_FLAGS) -o GcovReport
 	./GcovReport
 	@lcov -t "GcovReport" -o GcovReport.info --no-external -c -d .
 	@genhtml -o report GcovReport.info
 	open ./report/index-sort-f.html
+	make clean_gcov
 
+dist: clean_dist
+	mkdir -p ${DIST_DIR}
+	cp -rf ../../brick_game ${DIST_DIR}/brick_game
+	tar -czvf ../../game_archive.tar.gz ${DIST_DIR}
+	rm -rf ${DIST_DIR}
+
+dvi:
+	$(OPEN_COMMAND) ./dvi/README.html
 
 run: 
 	./tetris.out
-
-bepis: clean
-	$(CC) $(TETRIS_BACK) $(UI) $(TETRIS) $(LIBS) -o bepis
-	./bepis
 
 test: clean
 	$(CC) $(TETRIS_BACK) $(TEST_SOURCES) $(CHECK_FLAGS) -o test.out
@@ -53,7 +59,14 @@ clang:
 	@rm .clang-format
 
 
-clean: clean_gcov_report
-	rm -rf *.o *.out test.out bepis
-clean_gcov_report:
-	rm -rf GcovReport *.gcda *.gcno GcovReport.dSYM *.info report
+clean: clean_gcov clean_dist
+	rm -rf *.o *.out test.out bepis report 
+
+clean_gcov: clean_record
+	rm -rf GcovReport *.gcda *.gcno GcovReport.dSYM *.info
+
+clean_record:
+	rm -rf record
+
+clean_dist:
+	rm -rf ${DIST_DIR} ../../game_archive.tar.gz

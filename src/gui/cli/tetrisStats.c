@@ -1,4 +1,4 @@
-#include "menu.h"
+#include "tetrisStats.h"
 
 void printPoints(WINDOW *menuWin, GameInfo_t *gameInfo, int *y) {
   mvwprintw(menuWin, *y, 1, "%2d lvl", gameInfo->level);
@@ -26,13 +26,16 @@ void printNextBrick(WINDOW *menuWin, Brick *next, int *y) {
   wattroff(menuWin, COLOR_PAIR(next->color));
 }
 
-void printMenu(WINDOW *menuWin, GameInfo_t *gameInfo, int state) {
+void printTetrisStats(WINDOW *menuWin, GameInfo_t *gameInfo, int isOnPause) {
 
   int y = 1;
-  mvwprintw(menuWin, y, 1, "game menu");
+  if (isOnPause) {
+    mvwprintw(menuWin, y, 1, "%10s", "playing");
+  } else {
+    mvwprintw(menuWin, y, 1, "%10s", "on pause");
+  }
   y++;
   printPoints(menuWin, gameInfo, &y);
   printNextBrick(menuWin, &gameInfo->nextBrick, &y);
-  mvwprintw(menuWin, y + 5, 1, "state%3d", state);
   wrefresh(menuWin);
 }

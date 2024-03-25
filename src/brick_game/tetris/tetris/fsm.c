@@ -34,8 +34,11 @@ void getMoveData(int signal, int *direction, int *angle) {
 }
 
 void movingHandler(GameInfo_t *gameInfo, tetris_state *state,
-                   tetris_signals signal) {
-  if (signal != EXIT) {
+                   tetris_signals signal, WINDOW **windows) {
+
+  if (signal == PAUSE) {
+    *state = ONPAUSE;
+  } else if (signal != EXIT) {
     int direction = DIR_STATE;
     int angle = 0;
     getMoveData(signal, &direction, &angle);
@@ -45,11 +48,20 @@ void movingHandler(GameInfo_t *gameInfo, tetris_state *state,
     }
   } else
     *state = EXIT_STATE;
+
+  drawField(windows[GAME_WIN], gameInfo);
+  if (*state == ONPAUSE) {
+    printTetrisStats(windows[INFO_WIN], gameInfo, 0);
+  } else {
+    printTetrisStats(windows[INFO_WIN], gameInfo, 1);
+  }
 }
 
 void startHandler(GameInfo_t *gameInfo, tetris_state *state,
-                  tetris_signals signal) {
-  if (signal != EXIT) {
+                  tetris_signals signal, WINDOW *gameWin) {
+  startMessage(gameWin, gameInfo->winInfo.width, gameInfo->winInfo.width);
+
+  if (signal != NOSIG) {
     clearField(gameInfo->field, gameInfo->winInfo.height,
                gameInfo->winInfo.width);
     *state = SPAWN;
@@ -58,32 +70,48 @@ void startHandler(GameInfo_t *gameInfo, tetris_state *state,
   }
 }
 
-void gameOverHandler(tetris_state *state, tetris_signals signal) {
-  if (signal != EXIT) {
-    *state = START;
-  } else
-    *state = EXIT_STATE;
+void gameOverHandler(GameInfo_t *gameInfo, tetris_state *state,
+                     tetris_signals signal, WINDOW *gameWin) {
+
+  gameOverMessage(gameWin, gameInfo->winInfo.width, gameInfo->winInfo.width);
+  if (signal != NOSIG) {
+    if (signal != EXIT) {
+      *state = START;
+    } else
+      *state = EXIT_STATE;
+  }
 }
 
 void exitHandler(tetris_state *state) { *state = EXIT; }
 
+void pauseHandler(tetris_state *state, tetris_signals signal) {
+  if (signal == PAUSE) {
+    *state = MOVING;
+  } else if (signal == EXIT) {
+    *state = EXIT_STATE;
+  }
+}
+
 GameInfo_t updateCurrentState(GameInfo_t gameInfo, tetris_state *state,
-                              tetris_signals signal) {
+                              tetris_signals signal, WINDOW **windows) {
 
   switch (*state) {
 
   case START:
-    startHandler(&gameInfo, state, signal);
+    startHandler(&gameInfo, state, signal, windows[GAME_WIN]);
     break;
   case SPAWN:
     spawHandler(&gameInfo, state);
     break;
   case MOVING:
-    movingHandler(&gameInfo, state, signal);
+    movingHandler(&gameInfo, state, signal, windows);
     break;
     break;
   case GAMEOVER:
-    gameOverHandler(state, signal);
+    gameOverHandler(&gameInfo, state, signal, windows[GAME_WIN]);
+    break;
+  case ONPAUSE:
+    pauseHandler(state, signal);
     break;
   case EXIT_STATE:
     exitHandler(state);
@@ -92,12 +120,13 @@ GameInfo_t updateCurrentState(GameInfo_t gameInfo, tetris_state *state,
   return gameInfo;
 }
 
-tetris_signals get_signal(int userInput) {
+tetris_signals getSignal(int userInput) {
   tetris_signals rc = NOSIG;
 
-  if (userInput == KEY_UP)
-    rc = MOVE_UP;
-  else if (userInput == KEY_DOWN)
+  // if (userInput == KEY_UP)
+  //   rc = MOVE_UP;
+  // else 
+  if (userInput == KEY_DOWN)
     rc = MOVE_DOWN;
   else if (userInput == KEY_LEFT)
     rc = MOVE_LEFT;
@@ -107,6 +136,8 @@ tetris_signals get_signal(int userInput) {
     rc = ROTATE_LEFT;
   else if (userInput == KEY_ROTATE_RIGHT)
     rc = ROTATE_RIGHT;
+  else if (userInput == KEY_PAUSE)
+    rc = PAUSE;
   else if (userInput == ERR)
     rc = NOSIG;
   else if (userInput == KEY_ESCAPE)
@@ -114,5 +145,3 @@ tetris_signals get_signal(int userInput) {
 
   return rc;
 }
-
-int userInput() { return getch(); }

@@ -24,10 +24,6 @@ WINDOW *setUpWindow(int winNumber) {
   int width = GAME_WINDOW_WIDTH + 2;
   int starty = (LINES - height) / 2;
   int startx = 2 + width * winNumber;
-  char s[15];
-  sprintf(s, "win %d", winNumber);
-  mvprintw(starty - 1, startx + 2, s);
-
   refresh();
   WINDOW *localWindow = createNewWin(height, width, starty, startx);
   return localWindow;
@@ -38,48 +34,6 @@ int *setUpBrickGameWindows(WINDOW **windows, int winCount) {
     windows[i] = setUpWindow(i);
   }
   return 0;
-}
-
-int inputHandler(int *direction, int *angle) {
-  int ch = getch();
-  int res = 0;
-  *direction = 0;
-  *angle = 0;
-  ch = tolower(ch);
-  switch (ch) {
-  case KEY_LEFT:
-    *direction = DIR_LEFT;
-    break;
-  case KEY_RIGHT:
-    *direction = DIR_RIGHT;
-    break;
-  case KEY_UP:
-    *direction = DIR_TOP;
-    break;
-  case KEY_DOWN:
-    *direction = DIR_DOWN;
-    break;
-  case '0':
-    res = 404;
-    break;
-  case 'e':
-    *angle = -1;
-    *direction = 0;
-    break;
-  case 'q':
-    *angle = 1;
-    *direction = 0;
-    break;
-  case ERR:
-    res = ERR;
-    break;
-  default:
-    res = 1;
-    *direction = 0;
-    *angle = 0;
-    break;
-  }
-  return res;
 }
 
 void initColors() {
@@ -108,8 +62,8 @@ void cursesSetUp() {
   timeout(0);
 }
 
-void GameOverMessage(WINDOW *win, int width, int height) {
-  mvwprintw(win, height / 2, 1,     "game over");
+void gameOverMessage(WINDOW *win, int width, int height) {
+  mvwprintw(win, height / 2, 1, "game over");
   mvwprintw(win, height / 2 + 1, 1, "  press ");
   mvwprintw(win, height / 2 + 2, 1, " any key ");
   mvwprintw(win, height / 2 + 3, 1, "to start ");
@@ -119,8 +73,8 @@ void GameOverMessage(WINDOW *win, int width, int height) {
   wrefresh(win);
 }
 
-void StartMessage(WINDOW *win, int width, int height) {
-  mvwprintw(win, height / 2 , 2,    "  press ");
+void startMessage(WINDOW *win, int width, int height) {
+  mvwprintw(win, height / 2, 2, "  press ");
   mvwprintw(win, height / 2 + 1, 2, " any key ");
   mvwprintw(win, height / 2 + 2, 2, "to start ");
   mvwprintw(win, height / 2 + 3, 2, "  or 0 ");

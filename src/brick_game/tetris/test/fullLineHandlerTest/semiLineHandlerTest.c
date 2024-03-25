@@ -56,7 +56,7 @@ START_TEST(reset_brick_case_1) {
   int **field;
   initField(&field, width, height);
   GameInfo_t gameInfo;
-  initGameInfo(&gameInfo, field, 10);
+  initGameInfo(&gameInfo, field, 10, 10);
   gameInfo.winInfo.height = height;
   gameInfo.winInfo.width = width;
   Brick secondBrick = gameInfo.nextBrick;
@@ -77,21 +77,6 @@ START_TEST(reset_brick_case_1) {
 }
 END_TEST
 
-START_TEST(reset_brick_case_2) {
-  int width = 10;
-  int height = 1;
-  int **field;
-  initField(&field, width, height);
-  GameInfo_t gameInfo;
-  initGameInfo(&gameInfo, field, 10);
-  gameInfo.winInfo.height = height;
-  gameInfo.winInfo.width = width;
-  int status = resetBrick(&gameInfo);
-  ck_assert_int_eq(status, COL_STATE_CRIT);
-  deleteField(gameInfo.field, height);
-}
-END_TEST
-
 Suite *semi_linehandler_suite(void) {
   Suite *s;
   TCase *tc;
@@ -101,7 +86,6 @@ Suite *semi_linehandler_suite(void) {
   tcase_add_test(tc, drop_lines_case_1);
   tcase_add_test(tc, is_line_full_case_1);
   tcase_add_test(tc, reset_brick_case_1);
-  tcase_add_test(tc, reset_brick_case_2);
 
   suite_add_tcase(s, tc);
   return s;

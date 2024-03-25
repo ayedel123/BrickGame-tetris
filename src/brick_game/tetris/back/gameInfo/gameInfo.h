@@ -17,6 +17,7 @@ typedef struct {
   int level;
   int highScore;
   int speed;
+  int acceleration;
   int pause;
 
 } GameInfo_t;
@@ -24,7 +25,8 @@ typedef struct {
 void addPoints(GameInfo_t *gameInfo, int points);
 void writeRecord(const char *filename, int record);
 int readRecord(const char *filename);
-void initGameInfo(GameInfo_t *gameInfo, int **field, int speed);
+void initGameInfo(GameInfo_t *gameInfo, int **field, int speed,
+                  int acceleration);
 void baseInitGameInfo(GameInfo_t *gameInfo);
 
 #endif
