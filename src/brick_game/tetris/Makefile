@@ -13,11 +13,13 @@ G_FLAGS = -lpthread -g -fprofile-arcs -ftest-coverage
 DIST_DIR = ../../game_archive
 
 OPEN_COMMAND =open
-ifeq ($(OS), Linux)
-	OPEN_COMMAND=xdg-open
-else
+ifeq ($(OS), Darwin)
 	OPEN_COMMAND=open
+	CHECK_FLAGS = -lcheck
+else
+ 	CHECK_FLAGS =-lcheck -lm -lpthread -lrt -lsubunit
 endif
+
 
 all: gcov_report install run
 
