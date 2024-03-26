@@ -24,7 +24,7 @@ endif
 all: gcov_report install run
 
 install: ${TETRIS_BACK} $(FRONTEND) ${TETRIS}
-		$(CC) $(LIBS) $^ -o tetris.out
+		$(CC) $^ $(LIBS)  -o tetris.out
 
 uninstall:
 	rm -f tetris.out
