@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TETRIS 🕹️</title>
+</head>
+<body>
+    <h1># 🕹️ TETRIS</h1>
+    
+    <p>Console version of the classic game Tetris!</p>
+    
+    <h2>Installation</h2>
+    <p>To install the game</p>
+    <ul>
+        <li>go to <code>src</code> directory</li>
+        <li>run: <code>make install</code></li>
+        <li>run: <code>make run</code> to start the game</li>
+    </ul>
+    <p>To uninstall, run: <code>make uninstall</code></p>
+    
+    <h2>Finite State Machine Diagram</h2>
+    <img src="fsm.png" alt="Tetris finite state machine diagram">
+    
+    <h2>Features</h2>
+    <ul>
+        <li>Move blocks to the right, left, and down.</li>
+        <li>Rotation of the blocks.</li>
+        <li>Deleting of full lines.</li>
+        <li>6 types of blocks.</li>
+        <li>Display of next block.</li>
+        <li>Game over when block reaches the top of the game field.</li>
+        <li>Game field 10x20.</li>
+    </ul>
+    
+    <h3>Controls:</h3>
+    <ul>
+        <li>Start: <code>enter</code>.</li>
+        <li>Exit: <code>0</code>.</li>
+        <li>Pause: <code>spacebar</code>.</li>
+        <li>Move right: <code>Right arrow key</code></li>
+        <li>Move left: <code>Left arrow key</code></li>
+        <li>Move down: <code>Down arrow key</code></li>
+    </ul>
+    
+    <h3>Score Points and Level Up</h3>
+    <p>Earn points for clearing full lines.</p>
+    <ul>
+        <li>1 line - 100 points</li>
+        <li>2 lines - 300 points</li>
+        <li>3 lines - 700 points</li>
+        <li>4 lines - 1500 points</li>
+    </ul>
+    
+    <p>Climb through the levels</p>
+    <p>Earn 600 points to achieve a new level. Maximum level 10.</p>
+    
+    <h3>Set and Break Record</h3>
+    <p>Highest score saved between runs</p>
+    
+    <h2>Test Coverage</h2>
+    <p>Tests cover 94% for the backend functionality.</p>
+</body>
+</html>

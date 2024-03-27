@@ -39,7 +39,7 @@ int fullLineHandler(GameInfo_t *gameInfo) {
   if (fullLines != 0) {
     dropLines(gameInfo, lastLine, fullLines);
   }
-  return fullLines * 100;
+  return fullLines;
 }
 
 int resetBrick(GameInfo_t *gameInfo) {

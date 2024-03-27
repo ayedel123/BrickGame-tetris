@@ -61,7 +61,7 @@ void startHandler(GameInfo_t *gameInfo, tetris_state *state,
                   tetris_signals signal, WINDOW *gameWin) {
   startMessage(gameWin, gameInfo->winInfo.width, gameInfo->winInfo.width);
 
-  if (signal != NOSIG) {
+  if (signal == START_SIG) {
     clearField(gameInfo->field, gameInfo->winInfo.height,
                gameInfo->winInfo.width);
     *state = SPAWN;
@@ -125,7 +125,7 @@ tetris_signals getSignal(int userInput) {
 
   // if (userInput == KEY_UP)
   //   rc = MOVE_UP;
-  // else 
+  // else
   if (userInput == KEY_DOWN)
     rc = MOVE_DOWN;
   else if (userInput == KEY_LEFT)
@@ -140,6 +140,8 @@ tetris_signals getSignal(int userInput) {
     rc = PAUSE;
   else if (userInput == ERR)
     rc = NOSIG;
+  else if (userInput == KEY_START)
+    rc = START_SIG;
   else if (userInput == KEY_ESCAPE)
     rc = EXIT;
 

@@ -11,17 +11,19 @@ CURSES = -lncurses
 CHECK_FLAGS = -lcheck
 LIBS = $(CURSES)
 G_FLAGS = -lpthread -g -fprofile-arcs -ftest-coverage
-DIST_DIR = ../../game_archive
-OPEN_COMMAND =open
+DIST_DIR = game_archive
+OPEN_COMMAND = open
+
+DVI = dvi/README.html
 
 OS := $(shell uname)
 
 ifeq ($(OS),Darwin)
-    OPEN_COMMAND=open
+    OPEN_COMMAND= open
     CHECK_FLAGS = -lcheck
 else
-    OPEN_COMMAND=xdg-open
-    CHECK_FLAGS =-lcheck -lm -lpthread -lrt -lsubunit
+    OPEN_COMMAND= xdg-open
+    CHECK_FLAGS = -lcheck -lm -lpthread -lrt -lsubunit
 endif
 
 all: gcov_report install run
@@ -42,12 +44,15 @@ gcov_report: clean clean_record
 
 dist: clean_dist
 	mkdir -p ${DIST_DIR}
-	cp -rf ../../brick_game ${DIST_DIR}/brick_game
-	tar -czvf ../../game_archive.tar.gz ${DIST_DIR}
+	cp -rf MakeFile ${DIST_DIR}
+	cp -rf gui ${DIST_DIR}
+	cp -rf brick_game ${DIST_DIR}
+	cp -rf dvi_data ${DIST_DIR}
+	tar -cvf game_archive.tar ${DIST_DIR}
 	rm -rf ${DIST_DIR}
 
 dvi:
-	$(OPEN_COMMAND) ./dvi/README.html
+	$(OPEN_COMMAND) dvi_data/README.html
 
 run: 
 	./tetris.out
@@ -74,4 +79,4 @@ clean_record:
 	rm -rf record
 
 clean_dist:
-	rm -rf ${DIST_DIR} ../../game_archive.tar.gz
+	rm -rf ${DIST_DIR} game_archive.tar

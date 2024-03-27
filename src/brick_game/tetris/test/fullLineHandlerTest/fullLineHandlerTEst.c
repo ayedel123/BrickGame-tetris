@@ -40,12 +40,12 @@ START_TEST(case_2) {
   gameInfo.field[1][2] = 3;
   gameInfo.field[1][3] = 4;
 
-  int points = fullLineHandler(&gameInfo);
+  int fullLines = fullLineHandler(&gameInfo);
   ck_assert_int_eq(field[1][0], 1);
   ck_assert_int_eq(field[1][1], 2);
   ck_assert_int_eq(field[1][2], 3);
   ck_assert_int_eq(field[1][3], 0);
-  ck_assert_int_eq(points, 100);
+  ck_assert_int_eq(fullLines, 1);
 
   deleteField(gameInfo.field, height);
 }
@@ -73,12 +73,12 @@ START_TEST(case_3) {
   gameInfo.field[2][1] = 2;
   gameInfo.field[2][2] = 3;
   gameInfo.field[2][3] = 4;
-  int points = fullLineHandler(&gameInfo);
+  int fullLines = fullLineHandler(&gameInfo);
   ck_assert_int_eq(field[2][0], 1);
   ck_assert_int_eq(field[2][1], 2);
   ck_assert_int_eq(field[2][2], 3);
   ck_assert_int_eq(field[2][3], 0);
-  ck_assert_int_eq(points, 200);
+  ck_assert_int_eq(fullLines, 2);
 
   deleteField(gameInfo.field, height);
 }

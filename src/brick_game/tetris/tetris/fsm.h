@@ -26,6 +26,7 @@ typedef enum {
   ROTATE_RIGHT,
   PAUSE,
   EXIT,
+  START_SIG,
   NOSIG
 } tetris_signals;
 
@@ -34,6 +35,7 @@ typedef enum {
 #define KEY_ROTATE_RIGHT 'e'
 #define KEY_ESCAPE '0'
 #define KEY_PAUSE ' '
+#define KEY_START '\n'
 
 GameInfo_t updateCurrentState(GameInfo_t gameInfo, tetris_state *state,
                               tetris_signals signal, WINDOW **windows);

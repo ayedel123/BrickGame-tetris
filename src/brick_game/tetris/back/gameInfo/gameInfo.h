@@ -22,7 +22,7 @@ typedef struct {
 
 } GameInfo_t;
 
-void addPoints(GameInfo_t *gameInfo, int points);
+void addPoints(GameInfo_t *gameInfo, int fullLines);
 void writeRecord(const char *filename, int record);
 int readRecord(const char *filename);
 void initGameInfo(GameInfo_t *gameInfo, int **field, int speed,

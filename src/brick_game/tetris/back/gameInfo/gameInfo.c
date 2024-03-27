@@ -50,15 +50,36 @@ int readRecord(const char *filename) {
   return number;
 }
 
-void addPoints(GameInfo_t *gameInfo, int points) {
+void addPoints(GameInfo_t *gameInfo, int fullLines) {
+
+  int points = 0;
+  switch (fullLines) {
+  case 0:
+    points = 0;
+    break;
+  case 1:
+    points = 100;
+    break;
+  case 2:
+    points = 300;
+    break;
+  case 3:
+    points = 700;
+    break;
+  case 4:
+    points = 1500;
+    break;
+  default:
+    points = 1500;
+    break;
+  }
   if (gameInfo->points <= 100000000)
     gameInfo->points += points;
   if (gameInfo->points > gameInfo->highScore) {
     gameInfo->highScore = gameInfo->points;
     writeRecord("record", gameInfo->highScore);
   }
-
-  if (gameInfo->points >= 600 * gameInfo->level && gameInfo->level < 10) {
-    gameInfo->level += points / 600;
+  if (gameInfo->points >= 600 * (gameInfo->level) && gameInfo->level < 10) {
+    gameInfo->level = gameInfo->points / 600+1;
   }
 }

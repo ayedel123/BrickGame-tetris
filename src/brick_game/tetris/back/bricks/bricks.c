@@ -21,7 +21,6 @@ void bornBrick(Brick *brick, int x, int y, int brickType, int colorCount) {
   brickType = (brickType < 0 || brickType > BRICK_TYPES_COUNT)
                   ? rand() % BRICK_TYPES_COUNT
                   : brickType;
-  //brickType = 0;
 
   *brick = BRICKS_TYPES[brickType];
   brick->x = x;
