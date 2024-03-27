@@ -1,25 +1,28 @@
 CC = gcc
 CFLAGS =  -Werror -Wall -Wextra -std=c11
+
 PILK = pilk.c
-FRONTEND = ../../gui/cli/*.c
-TETRIS_BACK = back/bricks/*.c back/brickMovement/*.c back/fullLineHandler/*.c back/gameInfo/*.c back/field/*.c
-TETRIS = tetris/*.c
-TEST_SOURCES = test/*.c test/collisionTest/*.c test/movementTest/*.c test/fullLineHandlerTest/*.c test/addPointsTest/*.c
+FRONTEND = gui/cli/getUserInput/*.c gui/cli/tetrisStats/*.c gui/cli/timer/*.c gui/cli/ui/*.c gui/cli/window/*.c
+TETRIS_BACK = brick_game/tetris/back/bricks/*.c brick_game/tetris/back/brickMovement/*.c brick_game/tetris/back/fullLineHandler/*.c brick_game/tetris/back/gameInfo/*.c brick_game/tetris/back/field/*.c
+TETRIS = brick_game/tetris/tetris/*.c
+TEST_SOURCES = brick_game/tetris/test/*.c brick_game/tetris/test/collisionTest/*.c brick_game/tetris/test/movementTest/*.c brick_game/tetris/test/fullLineHandlerTest/*.c brick_game/tetris/test/addPointsTest/*.c
 
 CURSES = -lncurses
 CHECK_FLAGS = -lcheck
 LIBS = $(CURSES)
 G_FLAGS = -lpthread -g -fprofile-arcs -ftest-coverage
 DIST_DIR = ../../game_archive
-
 OPEN_COMMAND =open
-ifeq ($(OS), Darwin)
-	OPEN_COMMAND=open
-	CHECK_FLAGS = -lcheck
-else
- 	CHECK_FLAGS =-lcheck -lm -lpthread -lrt -lsubunit
-endif
 
+OS := $(shell uname)
+
+ifeq ($(OS),Darwin)
+    OPEN_COMMAND=open
+    CHECK_FLAGS = -lcheck
+else
+    OPEN_COMMAND=xdg-open
+    CHECK_FLAGS =-lcheck -lm -lpthread -lrt -lsubunit
+endif
 
 all: gcov_report install run
 

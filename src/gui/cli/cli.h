@@ -1,10 +1,10 @@
 #ifndef __CLI__
 #define __CLI__
 
-#include "getUserInput.h"
-#include "tetrisStats.h"
-#include "timer.h"
-#include "ui.h"
-#include "window.h"
+#include "getUserInput/getUserInput.h"
+#include "tetrisStats/tetrisStats.h"
+#include "timer/timer.h"
+#include "ui/ui.h"
+#include "window/window.h"
 
 #endif

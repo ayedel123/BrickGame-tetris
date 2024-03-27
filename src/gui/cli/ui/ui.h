@@ -1,8 +1,8 @@
 #ifndef __TETRIS_UI__
 #define __TETRIS_UI__
 
-#include "../../brick_game/tetris/back/back.h"
-#include "window.h"
+#include "../../../brick_game/tetris/back/back.h"
+#include "../window/window.h"
 
 #include <ctype.h>
 #include <ncurses.h>
